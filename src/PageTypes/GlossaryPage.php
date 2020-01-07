@@ -10,6 +10,8 @@ use SilverStripe\Forms\FieldList;
 
 use SilverStripe\Forms\LiteralField;
 
+use Sunnysideup\Glossary\Model\Term;
+
 class GlossaryPage extends Page
 {
     private static $description = 'Provides definitions of all Glossary (Annotated) Terms';
@@ -18,7 +20,7 @@ class GlossaryPage extends Page
 
     private static $plural_name = 'Glossary Pages';
 
-    private static $icon = 'glossary/images/icons/treeicons/GlossaryPage.png';
+    private static $icon = 'sunnysideup/glossary: client/images/icons/treeicons/GlossaryPage.png';
 
     private static $defaults = [
         'NoAnnotationOnThisPage' => true,
@@ -39,7 +41,7 @@ class GlossaryPage extends Page
         $this->beforeUpdateCMSFields(
             function (FieldList $fields) {
                 //remove all fields and add a link to glossary model admin
-                $term = Injector::inst()->get('Sunnysideup\Glossary\Model\Term');
+                $term = Injector::inst()->get(Term::class);
                 $fields->addFieldToTab(
                     'Root.Main',
                     LiteralField::create(
