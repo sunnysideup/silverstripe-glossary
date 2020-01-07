@@ -1,0 +1,13 @@
+---
+Name: glossary
+After:
+    - 'framework/*'
+---
+
+SilverStripe\ORM\FieldType\DBHTMLText:
+  extensions:
+    - 'Sunnysideup\Glossary\Model\FieldType\DBHTMLTextExtension'
+
+SilverStripe\CMS\Model\SiteTree:
+  extensions:
+    - 'Sunnysideup\Glossary\PageTypes\PageExtension'

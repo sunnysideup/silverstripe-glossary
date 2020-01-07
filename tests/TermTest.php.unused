@@ -1,0 +1,78 @@
+<?php
+
+use SilverStripe\Dev\SapphireTest;
+use Sunnysideup\Glossary\Model\Term;
+use Sunnysideup\Glossary\Model\Synonym;
+
+class TermTest extends SapphireTest
+{
+    protected static $extra_dataobjects = [
+        Term::class,
+        Synonym::class
+    ];
+
+    protected static $fixture_file = 'TermTest.yml';
+
+    protected function setUp()
+    {
+        parent::setUp();
+    }
+
+    /**
+     * hasLink
+     *
+     * @param [type] $html
+     * @param [type] $term
+     * @return boolean
+     */
+    private static function hasLink($html, $term)
+    {
+        return strstr($html, '<a') !== false;
+    }
+
+    /**
+     * testLinkGlossaryTerms
+     *
+     * @return void
+     */
+    public function testLinkGlossaryTerms()
+    {
+        $test_data = [
+            'nz' => [
+                'NZ' => true,
+                'NZL' => false,
+                'ANZ' => false,
+                'nz' => false,
+                'My NZ' => false,
+                'NZ ZN' => false,
+                'New Zealand' => true,
+                'nEw ZeAlAlD' => false,
+                '<a href="NZ.html">Go</a>' => false
+            ],
+            'us' => [
+                'US' => true,
+                'USA' => true,
+                'us' => false,
+                'usa' => false,
+                'Made in the USA' => true
+            ],
+            'loaf' => [
+                'loaf' => true,
+                'HELP YOUR LOAF HERE' => true,
+                'meatloaf' => false,
+                'loafer' => false,
+                'Your meat loaf can be picked here.' => false,
+                'my mom\'s loaf bread is the best' => false
+            ]
+        ];
+        foreach ($test_data as $term => $test_cases) {
+            $obj = $this->objFromFixture(Term::class, $term);
+            foreach ($test_cases as $input => $expected) {
+                $output = $obj->LinkGlossaryTerms($input);
+                $linked = self::hasLink($output, $term);
+                echo "\n$input => $output, $expected, $linked";
+                //$this->assertEquals($expected, $linked);
+            }
+        }
+    }
+}

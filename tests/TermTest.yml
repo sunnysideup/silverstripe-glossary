@@ -1,0 +1,30 @@
+Sunnysideup\Glossary\Model\Term:
+  nz:
+    Title: NZ
+    IsCaseSensitive: true
+    ExplanationShort: New Zealand
+    ExplanationFull: A country full of kiwis and sheep.
+    IgnoreAfter: My
+    IgnoreBefore: ZN
+  us:
+    Title: US
+    IsCaseSensitive: true
+    ExplanationShort: The United Status of America
+    ExplanationFull: A country with heaps of amenities.
+    IgnoreAfter: AUS
+    IgnoreBefore: USO
+  loaf:
+    Title: loaf
+    IsCaseSensitive: false
+    ExplanationShort: Sort of bread
+    ExplanationFull: A loaf is a shape, usually a rounded or oblong mass of food, typically and originally of bread.
+    IgnoreAfter: meat loaf
+    IgnoreBefore: loaf bread
+
+Sunnysideup\Glossary\Model\Synonym:
+  nzl:
+    Title: New Zealand
+    Term: =>Sunnysideup\Glossary\Model\Term.nz
+  usa:
+    Title: USA
+    Term: =>Sunnysideup\Glossary\Model\Term.us

@@ -1,0 +1,15 @@
+<?php
+
+use SilverStripe\Dev\SapphireTest;
+
+class PageTest extends SapphireTest
+{
+    protected static $fixture_file = 'TermTest.yml';
+
+    public function setUp()
+    {
+        parent::setUp();
+    }
+}
+
+?>

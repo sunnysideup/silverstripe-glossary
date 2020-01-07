@@ -1,0 +1,61 @@
+<?php
+
+namespace Sunnysideup\Glossary\PageTypes;
+
+use Page;
+use SilverStripe\Core\Injector\Injector;
+
+
+use SilverStripe\Forms\FieldList;
+
+use SilverStripe\Forms\LiteralField;
+
+class GlossaryPage extends Page
+{
+    private static $description = 'Provides definitions of all Glossary (Annotated) Terms';
+
+    private static $singular_name = 'Glossary Page';
+
+    private static $plural_name = 'Glossary Pages';
+
+    private static $icon = 'glossary/images/icons/treeicons/GlossaryPage.png';
+
+    private static $defaults = [
+        'NoAnnotationOnThisPage' => true,
+    ];
+
+    public function LinkToTitle($term)
+    {
+        return $this->Link('showterm/' . $term->URLSegment . '/');
+    }
+
+    public function canCreate($member = null, $context = [])
+    {
+        return self::get()->count() ? false : parent::canCreate($member, $context);
+    }
+
+    public function getCMSFields()
+    {
+        $this->beforeUpdateCMSFields(
+            function (FieldList $fields) {
+                //remove all fields and add a link to glossary model admin
+                $term = Injector::inst()->get('Sunnysideup\Glossary\Model\Term');
+                $fields->addFieldToTab(
+                    'Root.Main',
+                    LiteralField::create(
+                        'GlossaryMessage',
+                        '<h2>
+                            The content for this page is automatically generated from your Glossary Terms
+                        </h2>
+                        <p>
+                            <a href="' . $term->CMSListLink() . '">View / edit</a> existing glossary terms OR
+                            <a href="' . $term->CMSAddLink() . '">add</a> a new glossary term.
+                        </p>'
+                    ),
+                    'Metadata'
+                );
+            }
+        );
+        return parent::getCMSFields();
+    }
+}
