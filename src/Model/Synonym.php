@@ -8,11 +8,11 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataObject;
 
 
-use Sunnysideup\SiteTreeCanEdit\Model\Traits\SiteTreeCanEdit;
+// use Sunnysideup\SiteTreeCanEdit\Model\Traits\SiteTreeCanEdit;
 
 class Synonym extends DataObject
 {
-    use SiteTreeCanEdit;
+//     use SiteTreeCanEdit;
 
     private static $table_name = 'GlossarySynonym';
 
@@ -159,33 +159,12 @@ class Synonym extends DataObject
         return $result;
     }
 
-    public function onBeforeWrite()
-    {
-        parent::onBeforeWrite();
-        //...
-    }
-
-    public function onAfterWrite()
-    {
-        parent::onAfterWrite();
-        //...
-    }
-
-    public function requireDefaultRecords()
-    {
-        parent::requireDefaultRecords();
-        //...
     }
 
     #######################
     ### Import / Export Section
     #######################
 
-    public function getExportFields()
-    {
-        //..
-        return parent::getExportFields();
-    }
 
     #######################
     ### CMS Edit Section
