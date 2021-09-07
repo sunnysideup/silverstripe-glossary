@@ -19,11 +19,11 @@ use SilverStripe\ORM\DataObject;
 use Sunnysideup\Glossary\API\ReplacerBuilder;
 use Sunnysideup\Glossary\PageTypes\GlossaryPage;
 
-use Sunnysideup\SiteTreeCanEdit\Model\Traits\SiteTreeCanEdit;
+// use Sunnysideup\SiteTreeCanEdit\Model\Traits\SiteTreeCanEdit;
 
 class Term extends DataObject
 {
-    use SiteTreeCanEdit;
+    // use SiteTreeCanEdit;
 
     const TEMP_PLACE_HOLDER = '|?';
 
@@ -219,27 +219,11 @@ class Term extends DataObject
         //...
     }
 
-    public function onAfterWrite()
-    {
-        parent::onAfterWrite();
-        //...
-    }
-
-    public function requireDefaultRecords()
-    {
-        parent::requireDefaultRecords();
-        //...
-    }
 
     #######################
     ### Import / Export Section
     #######################
 
-    public function getExportFields()
-    {
-        //..
-        return parent::getExportFields();
-    }
 
     #######################
     ### CMS Edit Section
