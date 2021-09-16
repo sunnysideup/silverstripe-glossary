@@ -159,7 +159,6 @@ class Synonym extends DataObject
         return $result;
     }
 
-    }
 
     #######################
     ### Import / Export Section
