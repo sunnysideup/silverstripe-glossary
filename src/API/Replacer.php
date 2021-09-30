@@ -5,11 +5,7 @@ namespace Sunnysideup\Glossary\API;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injectable;
-
-
 use SilverStripe\View\ArrayData;
-
-use SilverStripe\ORM\DataList;
 
 class Replacer
 {
@@ -18,7 +14,6 @@ class Replacer
     use Configurable;
 
     /**
-     *
      * @var string
      */
     private $pattern;
@@ -28,12 +23,7 @@ class Replacer
     /**
      * Constructor. Use the builder class instead.
      *
-     * @param string $term
      * @param array $dataList
-     * @param array $synonymList
-     * @param array $ignoreBeforeList
-     * @param array $ignoreAfterList
-     * @param bool $isCaseSensitive
      */
     public function __construct(
         string $term,
@@ -42,8 +32,7 @@ class Replacer
         array $ignoreBeforeList,
         array $ignoreAfterList,
         bool $isCaseSensitive
-    )
-    {
+    ) {
         $termsAll = self::escape_str($term);
 
         // add synonyms
@@ -71,12 +60,11 @@ class Replacer
      * Replace html with glossary links.
      *
      * @param [type] $html
-     * @return string
      */
     public function replace(string $html): string
     {
         // do NOT process between <a> and </a>
-        $html = self::for_each_captures_all('/<a\b\s*[^>]*>(.*?)<\/a>/', $html, 1, function ($outerAnchorHtml) {
+        return self::for_each_captures_all('/<a\b\s*[^>]*>(.*?)<\/a>/', $html, 1, function ($outerAnchorHtml) {
             // do NOT process inside *.donotannotate
             return self::for_each_captures_all('/([^=]*)([^(a-z|A-Z|0-9|\-|_)])donotannotate("|([^(a-z|A-Z|0-9|\-|_)]).*")/', $outerAnchorHtml, 1, function ($outerDoNotAnnotate) {
                 // do NOT process inside shortcodes
@@ -96,8 +84,6 @@ class Replacer
                 }, null);
             }, null);
         }, null);
-
-        return $html;
     }
 
     /**
@@ -106,17 +92,17 @@ class Replacer
      * @param [type] $prefix
      * @param [type] $array
      * @param [type] $suffix
-     * @return string
      */
     private static function join_array_as_regexp($prefix, &$array, $suffix): string
     {
         // remove empty strings
         $array = array_filter($array, function ($e) {
-            return $e !== '';
+            return '' !== $e;
         });
-        if (count($array) === 0) {
+        if (0 === count($array)) {
             return '';
         }
+
         return $prefix . implode('|', self::escape_array($array)) . $suffix;
     }
 
@@ -124,7 +110,6 @@ class Replacer
      * Quote each array element.
      *
      * @param [type] $array
-     * @return array
      */
     private static function escape_array($array): array
     {
@@ -137,7 +122,6 @@ class Replacer
      * Quote a string.
      *
      * @param [type] $str
-     * @return string
      */
     private static function escape_str($str): string
     {
@@ -147,9 +131,6 @@ class Replacer
     /**
      * Call callback functions for each captured inner/outer strings.
      *
-     * @param string $pattern
-     * @param string $subject
-     * @param string $capture
      * @param function $callbackOuter
      * @param function $callbackInner
      *
@@ -158,7 +139,7 @@ class Replacer
     private static function for_each_captures_all(string $pattern, string $subject, string $capture, $callbackOuter, $callbackInner)
     {
         $hits = preg_match_all($pattern, $subject, $matches, PREG_OFFSET_CAPTURE);
-        if ($hits === 0) {
+        if (0 === $hits) {
             if (is_callable($callbackOuter)) {
                 $outer = call_user_func($callbackOuter, $subject);
             }

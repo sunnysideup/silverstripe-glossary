@@ -4,9 +4,7 @@ namespace Sunnysideup\Glossary\Model;
 
 use SilverStripe\Admin\CMSMenu;
 use SilverStripe\Core\Injector\Injector;
-
 use SilverStripe\ORM\DataObject;
-
 
 // use Sunnysideup\SiteTreeCanEdit\Model\Traits\SiteTreeCanEdit;
 
@@ -18,17 +16,17 @@ class Synonym extends DataObject
 
     // private static $table_name = 'Synonym';
 
-    #######################
-    ### Names Section
-    #######################
+    //######################
+    //## Names Section
+    //######################
 
     private static $singular_name = 'Synonym';
 
     private static $plural_name = 'Synonyms';
 
-    #######################
-    ### Model Section
-    #######################
+    //######################
+    //## Model Section
+    //######################
 
     private static $db = [
         'Title' => 'Varchar(255)',
@@ -38,9 +36,9 @@ class Synonym extends DataObject
         'ParentTerm' => Term::class,
     ];
 
-    #######################
-    ### Further DB Field Details
-    #######################
+    //######################
+    //## Further DB Field Details
+    //######################
 
     private static $indexes = [
         'Title' => [
@@ -60,9 +58,9 @@ class Synonym extends DataObject
         'Title' => 'PartialMatchFilter',
     ];
 
-    #######################
-    ### Field Names and Presentation Section
-    #######################
+    //######################
+    //## Field Names and Presentation Section
+    //######################
     //
     // private static $field_labels = [
     //     'ClassName' => 'asdf'
@@ -87,20 +85,17 @@ class Synonym extends DataObject
         return _t(self::class . '.PLURAL_NAME', 'Synonyms');
     }
 
-    #######################
-    ### Casting Section
-    #######################
+    //######################
+    //## Casting Section
+    //######################
 
+    //######################
+    //## can Section
+    //######################
 
-    #######################
-    ### can Section
-    #######################
-
-
-
-    #######################
-    ### write Section
-    #######################
+    //######################
+    //## write Section
+    //######################
 
     public function validate()
     {
@@ -113,7 +108,7 @@ class Synonym extends DataObject
                 $value = $this->{$field};
                 if (! $value) {
                     $fieldWithoutID = $field;
-                    if (substr($fieldWithoutID, -2) === 'ID') {
+                    if ('ID' === substr($fieldWithoutID, -2)) {
                         $fieldWithoutID = substr($fieldWithoutID, 0, -2);
                     }
                     $myName = isset($fieldLabels[$fieldWithoutID]) ? $fieldLabels[$fieldWithoutID] : $fieldWithoutID;
@@ -125,12 +120,13 @@ class Synonym extends DataObject
                         'REQUIRED_SYNONYM_' . strtoupper($field)
                     );
                 }
-                if (isset($indexes[$field]) && isset($indexes[$field]['type']) && $indexes[$field]['type'] === 'unique') {
+                if (isset($indexes[$field], $indexes[$field]['type']) && 'unique' === $indexes[$field]['type']) {
                     $id = (empty($this->ID) ? 0 : $this->ID);
                     $count = self::get()
                         ->filter([$field => $value])
                         ->exclude(['ID' => $id])
-                        ->count();
+                        ->count()
+                    ;
                     if ($count > 0) {
                         $myName = $fieldLabels[$field];
                         $result->addError(
@@ -159,15 +155,13 @@ class Synonym extends DataObject
         return $result;
     }
 
+    //######################
+    //## Import / Export Section
+    //######################
 
-    #######################
-    ### Import / Export Section
-    #######################
-
-
-    #######################
-    ### CMS Edit Section
-    #######################
+    //######################
+    //## CMS Edit Section
+    //######################
 
     public function fieldLabels($includerelations = true)
     {
@@ -228,7 +222,7 @@ class Synonym extends DataObject
 
     protected function modelAdminSingleton()
     {
-        return Injector::inst()->get("Sunnysideup\Glossary\Admin\CMSAdmin");
+        return Injector::inst()->get('Sunnysideup\\Glossary\\Admin\\CMSAdmin');
     }
 
     protected function classNameForCMS()
@@ -236,7 +230,7 @@ class Synonym extends DataObject
         return CMSMenu::get_menu_code($this->ClassName);
     }
 
-    #######################
-    ### CASTED Variables
-    #######################
+    //######################
+    //## CASTED Variables
+    //######################
 }

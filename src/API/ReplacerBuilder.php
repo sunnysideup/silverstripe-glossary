@@ -6,46 +6,39 @@ use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injectable;
 
-use SilverStripe\ORM\DataList;
-
 class ReplacerBuilder
 {
     use Extensible;
     use Injectable;
     use Configurable;
+    public $tag;
 
     /**
-     *
      * @var string
      */
     private $term;
 
     /**
-     *
      * @var array
      */
     private $dataList = [];
 
     /**
-     *
      * @var array
      */
     private $synonymList = [];
 
     /**
-     *
      * @var array
      */
     private $ignoreBeforeList = [];
 
     /**
-     *
      * @var array
      */
     private $ignoreAfterList = [];
 
     /**
-     *
      * @var bool
      */
     private $isCaseSensitive = false;

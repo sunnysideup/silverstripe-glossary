@@ -17,11 +17,9 @@ class PageExtension extends SiteTreeExtension
     ];
 
     /**
-     * Modify the settings for a SiteTree
+     * Modify the settings for a SiteTree.
      *
      * {@inheritDoc}
-     *
-     * @param FieldList $fields
      */
     public function updateSettingsFields(FieldList $fields)
     {

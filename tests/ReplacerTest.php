@@ -3,6 +3,10 @@
 use SilverStripe\Dev\SapphireTest;
 use Sunnysideup\Glossary\API\ReplacerBuilder;
 
+/**
+ * @internal
+ * @coversNothing
+ */
 class ReplacerTest extends SapphireTest
 {
     public function testLoaf()
@@ -22,7 +26,8 @@ class ReplacerTest extends SapphireTest
             ->addArrayDataValue('ExplanationShort', 'Kind of bread.')
             ->addIgnoreAfters(['meat'])     // ignore 'meat loaf'
             ->addIgnoreBefores(['bread'])   // ignore 'loaf bread'
-            ->build();
+            ->build()
+        ;
 
         foreach ($test_cases as $test => $expected) {
             $result = $replacer->replace($test);
@@ -52,7 +57,8 @@ class ReplacerTest extends SapphireTest
             ->addIgnoreAfters(['Air'])    // ignore 'Air New Zealand'
             ->addSynonyms(['Aotearoa', 'NZ'])   // Maori name, short name
             ->caseSensitive(true)
-            ->build();
+            ->build()
+        ;
 
         foreach ($test_cases as $test => $expected) {
             $result = $replacer->replace($test);

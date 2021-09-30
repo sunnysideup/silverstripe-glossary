@@ -3,19 +3,13 @@
 namespace Sunnysideup\Glossary\Model;
 
 use Page;
-
 use SilverStripe\Admin\CMSMenu;
 use SilverStripe\Core\Convert;
-
 use SilverStripe\Core\Injector\Injector;
-
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
-
 use SilverStripe\Forms\LiteralField;
-
 use SilverStripe\ORM\DataObject;
-
 use Sunnysideup\Glossary\API\ReplacerBuilder;
 use Sunnysideup\Glossary\PageTypes\GlossaryPage;
 
@@ -24,26 +18,31 @@ use Sunnysideup\Glossary\PageTypes\GlossaryPage;
 class Term extends DataObject
 {
     // use SiteTreeCanEdit;
+    /**
+     * @var string
+     */
+    public const TEMP_PLACE_HOLDER = '|?';
 
-    const TEMP_PLACE_HOLDER = '|?';
-
-    const HTML_CLASS = 'glossary-annotation';
+    /**
+     * @var string
+     */
+    public const HTML_CLASS = 'glossary-annotation';
 
     private static $table_name = 'GlossaryTerm';
 
     // private static $table_name = 'Term';
 
-    #######################
-    ### Names Section
-    #######################
+    //######################
+    //## Names Section
+    //######################
 
     private static $singular_name = 'Glossary Term';
 
     private static $plural_name = 'Glossary Terms';
 
-    #######################
-    ### Model Section
-    #######################
+    //######################
+    //## Model Section
+    //######################
 
     private static $db = [
         'Title' => 'Varchar(255)',
@@ -66,9 +65,9 @@ class Term extends DataObject
         'OnlyAnnotateOn' => Page::class,
     ];
 
-    #######################
-    ### Further DB Field Details
-    #######################
+    //######################
+    //## Further DB Field Details
+    //######################
 
     private static $indexes = [
         'Title' => [
@@ -104,9 +103,9 @@ class Term extends DataObject
         'Archived' => 'ExactMatchFilter',
     ];
 
-    #######################
-    ### Field Names and Presentation Section
-    #######################
+    //######################
+    //## Field Names and Presentation Section
+    //######################
 
     // private static $field_labels = [
     //     'ClassName' => 'asdf'
@@ -123,9 +122,9 @@ class Term extends DataObject
         'Archived.Nice' => 'No longer in use',
     ];
 
-    #######################
-    ### Casting Section
-    #######################
+    //######################
+    //## Casting Section
+    //######################
     private static $casting = [
         'ListOfSynonyms' => 'Varchar',
         'ListOfDoNotUseOn' => 'Varchar',
@@ -135,11 +134,11 @@ class Term extends DataObject
         'Anchor' => 'Varchar',
     ];
 
-    #######################
-    ### THE REPLACEMENTS ...
-    #######################
+    //######################
+    //## THE REPLACEMENTS ...
+    //######################
 
-    private static $_glossary_cache = null;
+    private static $_glossary_cache;
 
     private $replacer;
 
@@ -153,15 +152,13 @@ class Term extends DataObject
         return _t(self::class . '.PLURAL_NAME', 'Glossary Terms');
     }
 
-    #######################
-    ### can Section
-    #######################
+    //######################
+    //## can Section
+    //######################
 
-
-
-    #######################
-    ### write Section
-    #######################
+    //######################
+    //## write Section
+    //######################
 
     public function validate()
     {
@@ -174,7 +171,7 @@ class Term extends DataObject
                 $value = $this->{$field};
                 if (! $value) {
                     $fieldWithoutID = $field;
-                    if (substr($fieldWithoutID, -2) === 'ID') {
+                    if ('ID' === substr($fieldWithoutID, -2)) {
                         $fieldWithoutID = substr($fieldWithoutID, 0, -2);
                     }
                     $myName = isset($fieldLabels[$fieldWithoutID]) ? $fieldLabels[$fieldWithoutID] : $fieldWithoutID;
@@ -186,12 +183,13 @@ class Term extends DataObject
                         'REQUIRED_Term_' . $field
                     );
                 }
-                if (isset($indexes[$field]) && isset($indexes[$field]['type']) && $indexes[$field]['type'] === 'unique') {
+                if (isset($indexes[$field], $indexes[$field]['type']) && 'unique' === $indexes[$field]['type']) {
                     $id = (empty($this->ID) ? 0 : $this->ID);
                     $count = self::get()
                         ->filter([$field => $value])
                         ->exclude(['ID' => $id])
-                        ->count();
+                        ->count()
+                    ;
                     if ($count > 0) {
                         $myName = $fieldLabels[$field];
                         $result->addError(
@@ -209,25 +207,13 @@ class Term extends DataObject
         return $result;
     }
 
-    public function onBeforeWrite()
-    {
-        parent::onBeforeWrite();
-        $URLSegment = strtolower(urlencode($this->Title));
-        $this->URLSegment = $URLSegment;
-        $this->IgnoreBefore = str_ireplace($this->Title, '', $this->IgnoreBefore);
-        $this->IgnoreAfter = str_ireplace($this->Title, '', $this->IgnoreAfter);
-        //...
-    }
+    //######################
+    //## Import / Export Section
+    //######################
 
-
-    #######################
-    ### Import / Export Section
-    #######################
-
-
-    #######################
-    ### CMS Edit Section
-    #######################
+    //######################
+    //## CMS Edit Section
+    //######################
 
     public function fieldLabels($includerelations = true)
     {
@@ -331,7 +317,8 @@ class Term extends DataObject
             foreach ([$fieldA, $fieldB] as $tempField) {
                 $tempField
                     ->getConfig()
-                    ->removeComponentsByType(GridFieldAddNewButton::class);
+                    ->removeComponentsByType(GridFieldAddNewButton::class)
+                ;
             }
             $fields->removeFieldFromTab('Root', 'DoNotAnnotateOn');
             $fields->removeFieldFromTab('Root', 'OnlyAnnotateOn');
@@ -359,33 +346,25 @@ class Term extends DataObject
         return $fields;
     }
 
-    #######################
-    ### CASTED Variables
-    #######################
+    //######################
+    //## CASTED Variables
+    //######################
 
-    /**
-     *
-     * @return string
-     */
-    public function getFirstLetter() : string
+    public function getFirstLetter(): string
     {
-        if($this->Title) {
+        if ($this->Title) {
             return strtoupper($this->Title[0]);
         }
+
         return '';
     }
 
-    /**
-     *
-     * @return string
-     */
-    public function getAnchor() : string
+    public function getAnchor(): string
     {
         return 'position-for-' . Convert::raw2att($this->URLSegment);
     }
 
     /**
-     *
      * @return string
      */
     public function getLink()
@@ -394,6 +373,7 @@ class Term extends DataObject
         if ($page) {
             return $page->LinkToTitle($this);
         }
+
         return '404-no-glossary-page';
     }
 
@@ -428,13 +408,14 @@ class Term extends DataObject
     }
 
     /**
-     * @param  string $html  html to be annotated
-     * @param  int $pageID
+     * @param string $html   html to be annotated
+     * @param int    $pageID
+     *
      * @return string (html)
      */
-    public static function link_glossary_terms(string $html, ?int $pageID = 0) : string
+    public static function link_glossary_terms(string $html, ?int $pageID = 0): string
     {
-        if (self::$_glossary_cache === null) {
+        if (null === self::$_glossary_cache) {
             self::$_glossary_cache = self::get()->filter(
                 [
                     'Archived' => 0,
@@ -449,32 +430,45 @@ class Term extends DataObject
         return $html;
     }
 
-    protected function modelAdminSingleton()
+    protected function onBeforeWrite()
     {
-        return Injector::inst()->get("Sunnysideup\Glossary\Admin\CMSAdmin");
+        parent::onBeforeWrite();
+        $URLSegment = strtolower(urlencode($this->Title));
+        $this->URLSegment = $URLSegment;
+
+        $this->IgnoreBefore = str_ireplace($this->Title, '', $this->IgnoreBefore);
+        $this->IgnoreAfter = str_ireplace($this->Title, '', $this->IgnoreAfter);
+        //...
     }
 
-    protected function classNameForCMS() :string
+    protected function modelAdminSingleton()
+    {
+        return Injector::inst()->get('Sunnysideup\\Glossary\\Admin\\CMSAdmin');
+    }
+
+    protected function classNameForCMS(): string
     {
         return CMSMenu::get_menu_code($this->ClassName);
     }
 
     protected function performReadonlyTransformationForFields(FieldList $fields, $arrayOfFieldNames)
     {
-        foreach ($arrayOfFieldNames as $tempField => $useless) {
+        foreach (array_keys($arrayOfFieldNames) as $tempField) {
             $fields->replaceField($tempField, $fields->dataFieldByName($tempField)->performReadonlyTransformation());
         }
     }
 
-    protected function getListRelationsAsPages($method):string
+    protected function getListRelationsAsPages($method): string
     {
         if ($this->{$method}()->count()) {
             $array = [];
             foreach ($this->{$method}() as $page) {
                 $array[] = $page->Breadcrumb();
             }
+
             return implode(',', str_replace(',', ';', $array));
         }
+
         return _t(self::class . '.NONE', '(none)');
     }
 
@@ -482,8 +476,7 @@ class Term extends DataObject
      * Annotate html by inserting hyperlinks of terms.
      *
      * @param string $html
-     * @param int $pageID
-     * @return string
+     * @param int    $pageID
      */
     private function linkGlossaryTermsWorker($html, $pageID): string
     {
@@ -499,7 +492,8 @@ class Term extends DataObject
                     ->addIgnoreBefores(self::list_to_array($this->IgnoreBefore))
                     ->addIgnoreAfters(self::list_to_array($this->IgnoreAfter))
                     ->caseSensitive($this->IsCaseSensitive)
-                    ->build();
+                    ->build()
+                ;
             }
             // run
             $html = $this->replacer->replace($html);
@@ -511,9 +505,7 @@ class Term extends DataObject
     /**
      * Convert a line separated string into an array.
      *
-     * @param  string $string
-     *
-     * @return array
+     * @param string $string
      */
     private static function list_to_array($string): array
     {
@@ -522,12 +514,8 @@ class Term extends DataObject
 
     /**
      * see if the page is allowed to be annotated.
-     *
-     * @param int $pageID
-     *
-     * @return bool
      */
-    private function isAnnotationEnabled(int $pageID) : bool
+    private function isAnnotationEnabled(int $pageID): bool
     {
         if ($this->DoNotAnnotate) {
             return false;

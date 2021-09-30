@@ -3,7 +3,6 @@
 namespace Sunnysideup\Glossary\Model\FieldType;
 
 use SilverStripe\Control\Director;
-
 use SilverStripe\Core\Extension;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLText;

@@ -3,14 +3,9 @@
 namespace Sunnysideup\Glossary\PageTypes;
 
 use PageController;
-
 use SilverStripe\Core\Convert;
-
 use SilverStripe\ORM\GroupedList;
-
 use SilverStripe\View\Requirements;
-
-
 use Sunnysideup\Glossary\Model\Term;
 
 class GlossaryPageController extends PageController
@@ -78,6 +73,7 @@ class GlossaryPageController extends PageController
 
             return [];
         }
+
         return $this->httpError(404);
     }
 

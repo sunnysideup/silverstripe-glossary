@@ -4,12 +4,8 @@ namespace Sunnysideup\Glossary\PageTypes;
 
 use Page;
 use SilverStripe\Core\Injector\Injector;
-
-
 use SilverStripe\Forms\FieldList;
-
 use SilverStripe\Forms\LiteralField;
-
 use Sunnysideup\Glossary\Model\Term;
 
 class GlossaryPage extends Page
@@ -58,6 +54,7 @@ class GlossaryPage extends Page
                 );
             }
         );
+
         return parent::getCMSFields();
     }
 }
