@@ -58,8 +58,6 @@ class Replacer
 
     /**
      * Replace html with glossary links.
-     *
-     * @param string $html
      */
     public function replace(string $html): string
     {
