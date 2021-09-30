@@ -362,22 +362,39 @@ class Term extends DataObject
     #######################
     ### CASTED Variables
     #######################
-    public function getFirstLetter()
+
+    /**
+     *
+     * @return string
+     */
+    public function getFirstLetter() : string
     {
-        return strtoupper($this->Title[0]);
+        if($this->Title) {
+            return strtoupper($this->Title[0]);
+        }
+        return '';
     }
 
-    public function getAnchor()
+    /**
+     *
+     * @return string
+     */
+    public function getAnchor() : string
     {
         return 'position-for-' . Convert::raw2att($this->URLSegment);
     }
 
+    /**
+     *
+     * @return string
+     */
     public function getLink()
     {
         $page = DataObject::get_one(GlossaryPage::class);
         if ($page) {
             return $page->LinkToTitle($this);
         }
+        return '404-no-glossary-page';
     }
 
     public function getArrayOfSynonyms(): array
@@ -415,7 +432,7 @@ class Term extends DataObject
      * @param  int $pageID
      * @return string (html)
      */
-    public static function link_glossary_terms($html, $pageID = 0)
+    public static function link_glossary_terms(string $html, ?int $pageID = 0) : string
     {
         if (self::$_glossary_cache === null) {
             self::$_glossary_cache = self::get()->filter(
@@ -437,7 +454,7 @@ class Term extends DataObject
         return Injector::inst()->get("Sunnysideup\Glossary\Admin\CMSAdmin");
     }
 
-    protected function classNameForCMS()
+    protected function classNameForCMS() :string
     {
         return CMSMenu::get_menu_code($this->ClassName);
     }
@@ -449,7 +466,7 @@ class Term extends DataObject
         }
     }
 
-    protected function getListRelationsAsPages($method)
+    protected function getListRelationsAsPages($method):string
     {
         if ($this->{$method}()->count()) {
             $array = [];
@@ -508,9 +525,9 @@ class Term extends DataObject
      *
      * @param int $pageID
      *
-     * @return boolean
+     * @return bool
      */
-    private function isAnnotationEnabled($pageID)
+    private function isAnnotationEnabled(int $pageID) : bool
     {
         if ($this->DoNotAnnotate) {
             return false;

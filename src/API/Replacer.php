@@ -9,12 +9,18 @@ use SilverStripe\Core\Injector\Injectable;
 
 use SilverStripe\View\ArrayData;
 
+use SilverStripe\ORM\DataList;
+
 class Replacer
 {
     use Extensible;
     use Injectable;
     use Configurable;
 
+    /**
+     *
+     * @var string
+     */
     private $pattern;
 
     private $dataList;
@@ -22,14 +28,21 @@ class Replacer
     /**
      * Constructor. Use the builder class instead.
      *
-     * @param [type] $term
-     * @param [type] $dataList
-     * @param [type] $synonymList
-     * @param [type] $ignoreBeforeList
-     * @param [type] $ignoreAfterList
-     * @param [type] $isCaseSensitive
+     * @param string $term
+     * @param array $dataList
+     * @param array $synonymList
+     * @param array $ignoreBeforeList
+     * @param array $ignoreAfterList
+     * @param bool $isCaseSensitive
      */
-    public function __construct($term, $dataList, $synonymList, $ignoreBeforeList, $ignoreAfterList, $isCaseSensitive)
+    public function __construct(
+        string $term,
+        $dataList,
+        array $synonymList,
+        array $ignoreBeforeList,
+        array $ignoreAfterList,
+        bool $isCaseSensitive
+    )
     {
         $termsAll = self::escape_str($term);
 
@@ -60,7 +73,7 @@ class Replacer
      * @param [type] $html
      * @return string
      */
-    public function replace($html): string
+    public function replace(string $html): string
     {
         // do NOT process between <a> and </a>
         $html = self::for_each_captures_all('/<a\b\s*[^>]*>(.*?)<\/a>/', $html, 1, function ($outerAnchorHtml) {
@@ -142,7 +155,7 @@ class Replacer
      *
      * @return string
      */
-    private static function for_each_captures_all($pattern, $subject, $capture, $callbackOuter, $callbackInner)
+    private static function for_each_captures_all(string $pattern, string $subject, string $capture, $callbackOuter, $callbackInner)
     {
         $hits = preg_match_all($pattern, $subject, $matches, PREG_OFFSET_CAPTURE);
         if ($hits === 0) {

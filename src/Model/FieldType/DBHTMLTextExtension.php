@@ -11,7 +11,7 @@ use Sunnysideup\Glossary\Model\Term;
 
 class DBHTMLTextExtension extends Extension
 {
-    public function Annotated($pageID = 0)
+    public function Annotated(?int $pageID = 0)
     {
         $html = $this->owner->getValue();
         if (! $pageID) {
@@ -20,7 +20,7 @@ class DBHTMLTextExtension extends Extension
                 $pageID = $page->ID;
             }
         }
-        $newHTML = Term::link_glossary_terms($html, $pageID);
+        $newHTML = Term::link_glossary_terms((string) $html, (int) $pageID);
 
         $field = DBField::create_field(DBHTMLText::class, $newHTML);
         $field->setProcessShortcodes(true);
