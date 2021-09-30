@@ -328,14 +328,14 @@ class Term extends DataObject
         if ($this->Archived) {
             $archived = $fields->dataFieldByName('Archived');
             $achived = clone $archived;
-            $this->performReadonlyTransformationForFields($this->config()->stat('db'));
-            $this->performReadonlyTransformationForFields($this->config()->stat('has_one'));
-            $this->performReadonlyTransformationForFields($this->config()->stat('belongs_to'));
+            $this->performReadonlyTransformationForFields($fields, $this->config()->stat('db'));
+            $this->performReadonlyTransformationForFields($fields, $this->config()->stat('has_one'));
+            $this->performReadonlyTransformationForFields($fields, $this->config()->stat('belongs_to'));
 
             if ($this->exists()) {
-                $this->performReadonlyTransformationForFields($this->config()->stat('has_many'));
-                $this->performReadonlyTransformationForFields($this->config()->stat('many_many'));
-                $this->performReadonlyTransformationForFields($this->config()->stat('belongs_many_many'));
+                $this->performReadonlyTransformationForFields($fields, $this->config()->stat('has_many'));
+                $this->performReadonlyTransformationForFields($fields, $this->config()->stat('many_many'));
+                $this->performReadonlyTransformationForFields($fields, $this->config()->stat('belongs_many_many'));
             }
             $fields->addFieldToTab('Root.Main', $archived);
         }

@@ -59,7 +59,7 @@ class Replacer
     /**
      * Replace html with glossary links.
      *
-     * @param [type] $html
+     * @param string $html
      */
     public function replace(string $html): string
     {
@@ -89,9 +89,9 @@ class Replacer
     /**
      * Create a regexp pattern from an array.
      *
-     * @param [type] $prefix
-     * @param [type] $array
-     * @param [type] $suffix
+     * @param string $prefix
+     * @param array  $array
+     * @param string $suffix
      */
     private static function join_array_as_regexp($prefix, &$array, $suffix): string
     {
@@ -109,7 +109,7 @@ class Replacer
     /**
      * Quote each array element.
      *
-     * @param [type] $array
+     * @param array $array
      */
     private static function escape_array($array): array
     {
@@ -121,7 +121,7 @@ class Replacer
     /**
      * Quote a string.
      *
-     * @param [type] $str
+     * @param string $str
      */
     private static function escape_str($str): string
     {
