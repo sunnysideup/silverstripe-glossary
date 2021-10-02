@@ -84,7 +84,7 @@ class Replacer
                         // annotate the rest of html
                         return self::for_each_captures_all($this->pattern, $outerTagsHtml, 1, null, function ($term) use ($outerTagsHtml, &$haystack) {
 
-                            // if we need to ignore attached synonymcs (escape once per block rule) on each term, this extra condition:
+                            // if we need to ignore attached synonyms (escape once per block rule) on each term, this extra condition:
                             // ... && strtolower($term) === strtolower($haystack['short'])
                             // needs to be added in the below `if`
                             if($haystack !== 0 && in_array($term, $haystack['terms'])) {
