@@ -52,6 +52,7 @@ class Term extends DataObject
         'IgnoreBefore' => 'Text',
         'IsCaseSensitive' => 'Boolean(0)',
         'DoNotAnnotate' => 'Boolean(0)',
+        'OncePerBlock' => 'Boolean(0)',
         'Archived' => 'Boolean(0)',
         'URLSegment' => 'Varchar',
     ];
@@ -81,6 +82,7 @@ class Term extends DataObject
         'Archived' => false,
         'DoNotAnnotate' => false,
         'IsCaseSensitive' => false,
+        'OncePerBlock' => false,
     ];
 
     private static $default_sort = [
@@ -100,6 +102,7 @@ class Term extends DataObject
         'IgnoreAfter' => 'PartialMatchFilter',
         'IgnoreBefore' => 'PartialMatchFilter',
         'IsCaseSensitive' => 'ExactMatchFilter',
+        'OncePerBlock' => 'ExactMatchFilter',
         'Archived' => 'ExactMatchFilter',
     ];
 
@@ -225,6 +228,7 @@ class Term extends DataObject
         $labels['IgnoreAfter'] = _t(self::class . '.IgnoreAfter', 'Ignore After');
         $labels['IgnoreBefore'] = _t(self::class . '.IgnoreBefore', 'Ignore Before');
         $labels['IsCaseSensitive'] = _t(self::class . '.IsCaseSensitive', 'Case-sensitive');
+        $labels['OncePerBlock'] = _t(self::class . '.OncePerBlock', 'Limited annotation');
         $labels['DoNotAnnotateOn'] = _t(self::class . '.DoNotAnnotateOn', 'Ignore on ...');
         $labels['OnlyAnnotateOn'] = _t(self::class . '.OnlyAnnotateOn', 'Only annotate on ...');
         $labels['ListOfSynonyms'] = _t(self::class . '.ListOfSynonyms', 'List of Synonyms');
@@ -244,6 +248,7 @@ class Term extends DataObject
         $labels['IgnoreAfter'] = _t(self::class . '.IgnoreAfter_RightLabel', 'If this terms comes after ... then do not annotate it. Separate entries with a new line. Example: enter <em>Ministry of</em> here when you do not want to annotate <em>Ministry of Food</em> but you do want to annotate <em>Food</em> in a context where it does not refer to the Ministry of Food.');
         $labels['IgnoreBefore'] = _t(self::class . '.IgnoreBefore_RightLabel', 'If this terms is immediately before ... then do not annotate it. . Separate entries with a new line. Example: enter <em>Builder</em> here when you do not want to annotate <em>Boat Builder</em> but you do want to annotate <em>Boat</em> by itself.');
         $labels['IsCaseSensitive'] = _t(self::class . '.IsCaseSensitive_RightLabel', 'Only annotate if case matches?');
+        $labels['OncePerBlock'] = _t(self::class . '.OncePerBlock_RightLabel', 'Annotation happens once per HTML block');
         $labels['DoNotAnnotateOn'] = _t(self::class . '.DoNotAnnotateOn_RightLabel', 'You can select pages on which this term should not be annotated.');
         $labels['OnlyAnnotateOn'] = _t(self::class . '.OnlyAnnotateOn_RightLabel', 'You can select specific pages on which this annotation should take place.');
         $labels['Archived'] = _t(self::class . '.Archived_RightLabel', 'No longer in use. The reason you can archive it here is so you can record that a term is no longer in use rather than just removing it (with the risk of it being added again). ');
@@ -295,6 +300,7 @@ class Term extends DataObject
                 $fields->dataFieldByName('IgnoreAfter'),
                 $fields->dataFieldByName('IgnoreBefore'),
                 $fields->dataFieldByName('IsCaseSensitive'),
+                $fields->dataFieldByName('OncePerBlock'),
                 $fields->dataFieldByName('DoNotAnnotate'),
                 $fields->dataFieldByName('Archived'),
             ]
@@ -492,6 +498,7 @@ class Term extends DataObject
                     ->addIgnoreBefores(self::list_to_array($this->IgnoreBefore))
                     ->addIgnoreAfters(self::list_to_array($this->IgnoreAfter))
                     ->caseSensitive($this->IsCaseSensitive)
+                    ->oncePerHTMLBlock($this->OncePerBlock)
                     ->build()
                 ;
             }
