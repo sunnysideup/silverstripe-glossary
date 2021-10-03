@@ -52,7 +52,7 @@ class Term extends DataObject
         'IgnoreBefore' => 'Text',
         'IsCaseSensitive' => 'Boolean(0)',
         'DoNotAnnotate' => 'Boolean(0)',
-        'OncePerBlock' => 'Boolean(0)',
+        'OncePerBlock' => 'Boolean(1)',
         'Archived' => 'Boolean(0)',
         'URLSegment' => 'Varchar',
     ];
