@@ -328,14 +328,17 @@ class Term extends DataObject
         if ($this->Archived) {
             $archived = $fields->dataFieldByName('Archived');
             $achived = clone $archived;
-            $this->performReadonlyTransformationForFields($fields, $this->config()->stat('db'));
-            $this->performReadonlyTransformationForFields($fields, $this->config()->stat('has_one'));
-            $this->performReadonlyTransformationForFields($fields, $this->config()->stat('belongs_to'));
+            $fields->removeByName([
+                'Archived'
+            ]);
+            $this->performReadonlyTransformationForFields($fields, 'db');
+            $this->performReadonlyTransformationForFields($fields, 'has_one');
+            $this->performReadonlyTransformationForFields($fields, 'belongs_to');
 
             if ($this->exists()) {
-                $this->performReadonlyTransformationForFields($fields, $this->config()->stat('has_many'));
-                $this->performReadonlyTransformationForFields($fields, $this->config()->stat('many_many'));
-                $this->performReadonlyTransformationForFields($fields, $this->config()->stat('belongs_many_many'));
+                $this->performReadonlyTransformationForFields($fields, 'has_many');
+                $this->performReadonlyTransformationForFields($fields, 'many_many');
+                $this->performReadonlyTransformationForFields($fields, 'belongs_many_many');
             }
             $fields->addFieldToTab('Root.Main', $archived);
         }
@@ -451,10 +454,17 @@ class Term extends DataObject
         return CMSMenu::get_menu_code($this->ClassName);
     }
 
-    protected function performReadonlyTransformationForFields(FieldList $fields, $arrayOfFieldNames)
+    protected function performReadonlyTransformationForFields(FieldList $fields, string $rel)
     {
-        foreach (array_keys($arrayOfFieldNames) as $tempField) {
-            $fields->replaceField($tempField, $fields->dataFieldByName($tempField)->performReadonlyTransformation());
+        $arrayOfFieldNames = $this->config()->get($rel);
+        if(! empty($arrayOfFieldNames)) {
+            $arrayOfFieldNameKeys = array_keys($arrayOfFieldNames);
+            foreach ($arrayOfFieldNameKeys as $tempField) {
+                $field = $fields->dataFieldByName($tempField);
+                if($field) {
+                    $fields->replaceField($tempField, $field->performReadonlyTransformation());
+                }
+            }
         }
     }
 
