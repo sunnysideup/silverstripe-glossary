@@ -241,13 +241,14 @@ class Term extends DataObject
         $labels['ExplanationShort'] = _t(self::class . '.ExplanationShort_RightLabel', 'Short Description of the Title.');
         $labels['ExplanationFull'] = _t(self::class . '.ExplanationFull_RightLabel', 'Full description of the Title.');
         $labels['Synonyms'] = _t(self::class . '.Synonyms_RightLabel', 'e.g. kiwi and antipodean could be synonyms for New Zealander.');
-        $labels['IgnoreAfter'] = _t(self::class . '.IgnoreAfter_RightLabel', 'If this terms comes after ... then do not annotate it. Separate entries with a new line. Example: enter <em>Ministry of</em> here when you do not want to annotate <em>Ministry of Food</em> but you do want to annotate <em>Food</em> in a context where it does not refer to the Ministry of Food.');
-        $labels['IgnoreBefore'] = _t(self::class . '.IgnoreBefore_RightLabel', 'If this terms is immediately before ... then do not annotate it. . Separate entries with a new line. Example: enter <em>Builder</em> here when you do not want to annotate <em>Boat Builder</em> but you do want to annotate <em>Boat</em> by itself.');
+        $labels['IgnoreAfter'] = _t(self::class . '.IgnoreAfter_RightLabel', 'If this terms comes after [terms entered above] then do not annotate it. Separate entries with a new line. Example: enter "<em>Ministry of</em>" above when you do not want to annotate "<em>Ministry of Food</em>" but you do want to annotate the current term <em>"Food"</em>.');
+        $labels['IgnoreBefore'] = _t(self::class . '.IgnoreBefore_RightLabel', 'If this terms is immediately before [terms entered above] then do not annotate it. . Separate entries with a new line. Example: enter <em>"Builder"</em> here when you do not want to annotate "<em>Boat Builder</em>" but would like to annotate "<em>Boat</em>" by itself.');
         $labels['IsCaseSensitive'] = _t(self::class . '.IsCaseSensitive_RightLabel', 'Only annotate if case matches?');
         $labels['DoNotAnnotateOn'] = _t(self::class . '.DoNotAnnotateOn_RightLabel', 'You can select pages on which this term should not be annotated.');
         $labels['OnlyAnnotateOn'] = _t(self::class . '.OnlyAnnotateOn_RightLabel', 'You can select specific pages on which this annotation should take place.');
         $labels['Archived'] = _t(self::class . '.Archived_RightLabel', 'No longer in use. The reason you can archive it here is so you can record that a term is no longer in use rather than just removing it (with the risk of it being added again). ');
         $labels['DoNotAnnotate'] = _t(self::class . '.DoNotAnnotate_RightLabel', 'Show in glossary, but do not use for annotate in other pages.');
+        $labels['ListOfSynonyms'] = _t(self::class . '.ListOfSynonyms_RightLabel', 'Similar words that should also be annotated.');
 
         return $labels;
     }
