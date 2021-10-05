@@ -43,11 +43,6 @@ class ReplacerBuilder
      */
     private $isCaseSensitive = false;
 
-    /**
-     * @var bool
-     */
-    private $isOncePerBlock = false;
-
     public function __construct($term)
     {
         $this->term = $term;
@@ -105,13 +100,6 @@ class ReplacerBuilder
         return $this;
     }
 
-    public function oncePerHTMLBlock($once = false): self
-    {
-        $this->isOncePerBlock = $once;
-
-        return $this;
-    }
-
     public function build(): Replacer
     {
         return new Replacer(
@@ -120,8 +108,7 @@ class ReplacerBuilder
             $this->synonymList,
             $this->ignoreBeforeList,
             $this->ignoreAfterList,
-            $this->isCaseSensitive,
-            $this->isOncePerBlock
+            $this->isCaseSensitive
         );
     }
 }
