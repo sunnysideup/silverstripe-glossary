@@ -70,7 +70,7 @@ class Replacer
 
         if($this->oncePerBlock)
         {
-            $haystack = ['terms' => [], 'short' => $this->dataList['ExplanationShort']];
+            $haystack = ['terms' => [], 'short' => strtolower($this->dataList['ExplanationShort'])];
         }
 
         // do NOT process between <a> and </a>
@@ -87,12 +87,12 @@ class Replacer
                             // if we need to ignore attached synonyms (escape once per block rule) on each term, this extra condition:
                             // ... && strtolower($term) === strtolower($haystack['short'])
                             // needs to be added in the below `if`
-                            if($haystack !== 0 && in_array($term, $haystack['terms'])) {
+                            if($haystack !== 0 && in_array(strtolower($term), $haystack['terms'])) {
                                 return $term;
                             } else {
                                 if(is_array($haystack)) {
                                     // add term to haystack
-                                    $haystack['terms'][] = $term;
+                                    $haystack['terms'][] = strtolower($term);
                                 }
                                 // override 'Title' with the current term
                                 $array = array_merge($this->dataList, ['Title' => $term]);
