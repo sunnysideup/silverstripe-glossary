@@ -14,8 +14,15 @@ $Content.Annotated
 $OtherContent.Annotated
 ```
 
-This will then add descriptions to terms you enter in the CMS.  You can style
+This will then add descriptions to terms you enter in the CMS. You can style
 these annotations as you see fit.
+
+You can also annotate terms once per HTML block
+```html
+$Content.AnnotatedOncePerTerm
+```
+
+```
 
 ## js example
 

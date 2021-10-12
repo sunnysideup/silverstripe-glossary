@@ -20,8 +20,6 @@ class Replacer
 
     private $dataList;
 
-    private $oncePerBlock;
-
     /**
      * Constructor. Use the builder class instead.
      *
@@ -33,10 +31,10 @@ class Replacer
         array $synonymList,
         array $ignoreBeforeList,
         array $ignoreAfterList,
-        bool $isCaseSensitive,
-        bool $isOncePerBlock
+        bool $isCaseSensitive
     ) {
         $termsAll = self::escape_str($term);
+
         // add synonyms
         $termsAll .= self::join_array_as_regexp('|', $synonymList, '');
 
@@ -56,9 +54,6 @@ class Replacer
 
         // clone a data list for later use
         $this->dataList = $dataList;
-
-        // set annotation rule (once or multiple)
-        $this->oncePerBlock = $isOncePerBlock;
     }
 
     /**
@@ -66,50 +61,27 @@ class Replacer
      */
     public function replace(string $html): string
     {
-        $haystack = 0;
-
-        if($this->oncePerBlock)
-        {
-            $haystack = ['terms' => [], 'short' => strtolower($this->dataList['ExplanationShort'])];
-        }
-
         // do NOT process between <a> and </a>
-        $return = self::for_each_captures_all('/<a\b\s*[^>]*>(.*?)<\/a>/', $html, 1, function ($outerAnchorHtml) use ($haystack) {
+        return self::for_each_captures_all('/<a\b\s*[^>]*>(.*?)<\/a>/', $html, 1, function ($outerAnchorHtml) {
             // do NOT process inside *.donotannotate
-            return self::for_each_captures_all('/([^=]*)([^(a-z|A-Z|0-9|\-|_)])donotannotate("|([^(a-z|A-Z|0-9|\-|_)]).*")/', $outerAnchorHtml, 1, function ($outerDoNotAnnotate) use ($haystack) {
+            return self::for_each_captures_all('/([^=]*)([^(a-z|A-Z|0-9|\-|_)])donotannotate("|([^(a-z|A-Z|0-9|\-|_)]).*")/', $outerAnchorHtml, 1, function ($outerDoNotAnnotate) {
                 // do NOT process inside shortcodes
-                return self::for_each_captures_all('/\[[^\]]*?\]/', $outerDoNotAnnotate, 0, function ($outerShortcodeHtml) use ($haystack) {
+                return self::for_each_captures_all('/\[[^\]]*?\]/', $outerDoNotAnnotate, 0, function ($outerShortcodeHtml) {
                     // do NOT process inside HTML tags i.e. '<' and '>'
-                    return self::for_each_captures_all('/\<[^\>]*?\>/', $outerShortcodeHtml, 0, function ($outerTagsHtml) use (&$haystack) {
+                    return self::for_each_captures_all('/\<[^\>]*?\>/', $outerShortcodeHtml, 0, function ($outerTagsHtml) {
                         // annotate the rest of html
-                        return self::for_each_captures_all($this->pattern, $outerTagsHtml, 1, null, function ($term) use ($outerTagsHtml, &$haystack) {
-
-                            // if we need to ignore attached synonyms (escape once per block rule) on each term, this extra condition:
-                            // ... && strtolower($term) === strtolower($haystack['short'])
-                            // needs to be added in the below `if`
-                            if($haystack !== 0 && in_array(strtolower($term), $haystack['terms'])) {
-                                return $term;
-                            } else {
-                                if(is_array($haystack)) {
-                                    // add term to haystack
-                                    $haystack['terms'][] = strtolower($term);
-                                }
-                                // override 'Title' with the current term
-                                $array = array_merge($this->dataList, ['Title' => $term]);
-                                // create an ArrayData
-                                $arrayData = ArrayData::create($array);
-                                // render it
-
-                                return $arrayData->renderWith('GlossaryItemAsPopUp');
-                            }
-
+                        return self::for_each_captures_all($this->pattern, $outerTagsHtml, 1, null, function ($term) {
+                            // override 'Title' with the current term
+                            $array = array_merge($this->dataList, ['Title' => $term]);
+                            // create an ArrayData
+                            $arrayData = ArrayData::create($array);
+                            // render it
+                            return $arrayData->renderWith('GlossaryItemAsPopUp');
                         });
                     }, null);
                 }, null);
             }, null);
         }, null);
-
-        return $return;
     }
 
     /**

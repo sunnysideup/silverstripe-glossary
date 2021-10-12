@@ -13,7 +13,8 @@
         "Explanations"
     ],
     "require": {
-        "silverstripe/cms": "4.*"
+        "silverstripe/cms": "4.*",
+        "wa72/htmlpagedom": "^2.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
