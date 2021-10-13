@@ -38,17 +38,19 @@ class DBHTMLTextExtension extends Extension
 
             $exceptionList = [];
 
-            $crawler->filter('span.glossary-button-and-annotation-holder')->each(function($element) use (&$exceptionList) {
+            $crawler->filter('span.glossary-button-and-annotation-holder')->each(
+                function($element) use (&$exceptionList) {
 
-                $term = $element->filter('dfn')->first()->html();
+                    $term = $element->filter('dfn')->first()->html();
 
-                if(in_array(strtolower($term), $exceptionList)) {
-                    return $element->replaceWith($term);
-                } else {
-                    $exceptionList[] = strtolower($term);
+                    if(in_array(strtolower($term), $exceptionList)) {
+                        return $element->replaceWith($term);
+                    } else {
+                        $exceptionList[] = strtolower($term);
+                    }
+
                 }
-
-            });
+            );
 
             $newHTML = $crawler->saveHTML();
         }
