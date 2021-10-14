@@ -39,8 +39,8 @@ class Replacer
         $termsAll .= self::join_array_as_regexp('|', $synonymList, '');
 
         // add ignore lists
-        $negLookBehind = self::join_array_as_regexp('(?<!', $ignoreAfterList, '\s)');
-        $negLookAhead = self::join_array_as_regexp('(?!\s', $ignoreBeforeList, ')');
+        $negLookBehind = self::join_array_as_regexp('(?<!', $ignoreAfterList, '\s)', true);
+        $negLookAhead = self::join_array_as_regexp('(?!\s', $ignoreBeforeList, ')', true);
 
         // add options
         $options = '';
@@ -90,8 +90,9 @@ class Replacer
      * @param string $prefix
      * @param array  $array
      * @param string $suffix
+     * @param boolean $individual
      */
-    private static function join_array_as_regexp($prefix, &$array, $suffix): string
+    private static function join_array_as_regexp($prefix, &$array, $suffix, $individual = false): string
     {
         // remove empty strings
         $array = array_filter($array, function ($e) {
@@ -101,7 +102,15 @@ class Replacer
             return '';
         }
 
-        return $prefix . implode('|', self::escape_array($array)) . $suffix;
+        if($individual) {
+            $return = '';
+            foreach($array as $item) {
+                $return .= $prefix . self::escape_str($item) . $suffix;
+            }
+            return $return;
+        } else {
+            return $prefix . implode('|', self::escape_array($array)) . $suffix;
+        }
     }
 
     /**
