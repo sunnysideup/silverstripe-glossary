@@ -52,7 +52,18 @@ class DBHTMLTextExtension extends Extension
                 }
             );
 
-            $newHTML = $crawler->saveHTML();
+            // A soft replace html entities (SS editor exceptions)
+            $editorExceptionFrom = [
+                '%5B',
+                '%5D'
+            ];
+
+            $editorExceptionTo = [
+                '[',
+                ']'
+            ];
+
+            $newHTML = str_replace($editorExceptionFrom, $editorExceptionTo, $crawler->saveHTML());
         }
 
         $field = DBField::create_field(DBHTMLText::class, $newHTML);
