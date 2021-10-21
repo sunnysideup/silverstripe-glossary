@@ -6,6 +6,6 @@
         <button class="close-popup">Close</button>
         <dfn>$Title</dfn><br>
         <span class="term-def">$ExplanationShort</span>
-        <a href="$Link">View the full glossary</a>
+        <a href="$Link" target="_blank" class="new-tab">View the full glossary</a>
     </span>
 </span>
