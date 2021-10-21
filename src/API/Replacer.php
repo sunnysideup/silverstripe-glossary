@@ -50,7 +50,7 @@ class Replacer
         }
 
         // create a pattern string by combining a word boundary, negative look behind, terms, negative look ahead and options
-        $this->pattern = '/\b' . $negLookBehind . '(' . $termsAll . ')' . $negLookAhead . '\b/' . $options;
+        $this->pattern = '/\b' . $negLookBehind . '(' . $termsAll . ')' . $negLookAhead . '\b/u' . $options;
 
         // clone a data list for later use
         $this->dataList = $dataList;
@@ -61,14 +61,16 @@ class Replacer
      */
     public function replace(string $html): string
     {
+        // $html = iconv('utf-8','ascii//TRANSLIT', $html);
+
         // do NOT process between <a> and </a>
         return self::for_each_captures_all('/<a\b\s*[^>]*>(.*?)<\/a>/', $html, 1, function ($outerAnchorHtml) {
             // do NOT process inside *.donotannotate
-            return self::for_each_captures_all('/([^=]*)([^(a-z|A-Z|0-9|\-|_)])donotannotate("|([^(a-z|A-Z|0-9|\-|_)]).*")/', $outerAnchorHtml, 1, function ($outerDoNotAnnotate) {
+            return self::for_each_captures_all('/([^=]*)([^(a-z|A-Z|0-9|\-|_)])donotannotate("|([^(a-z|A-Z|0-9|\-|_)]).*")/u', $outerAnchorHtml, 1, function ($outerDoNotAnnotate) {
                 // do NOT process inside shortcodes
-                return self::for_each_captures_all('/\[[^\]]*?\]/', $outerDoNotAnnotate, 0, function ($outerShortcodeHtml) {
+                return self::for_each_captures_all('/\[[^\]]*?\]/u', $outerDoNotAnnotate, 0, function ($outerShortcodeHtml) {
                     // do NOT process inside HTML tags i.e. '<' and '>'
-                    return self::for_each_captures_all('/\<[^\>]*?\>/', $outerShortcodeHtml, 0, function ($outerTagsHtml) {
+                    return self::for_each_captures_all('/\<[^\>]*?\>/u', $outerShortcodeHtml, 0, function ($outerTagsHtml) {
                         // annotate the rest of html
                         return self::for_each_captures_all($this->pattern, $outerTagsHtml, 1, null, function ($term) {
                             // override 'Title' with the current term
