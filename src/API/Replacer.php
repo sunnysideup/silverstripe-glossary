@@ -77,8 +77,8 @@ class Replacer
                             $array = array_merge($this->dataList, ['Title' => $term]);
                             // create an ArrayData
                             $arrayData = ArrayData::create($array);
-                            // render it
-                            return $arrayData->renderWith('GlossaryItemAsPopUp');
+                            // render it - TRIM is important here so that a fullstop can sit flush against item.
+                            return trim($arrayData->renderWith('GlossaryItemAsPopUp'));
                         });
                     }, null);
                 }, null);

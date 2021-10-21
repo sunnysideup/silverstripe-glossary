@@ -1,11 +1,1 @@
-<span class='glossary-button-and-annotation-holder'>
-    <button class="glossary-button">
-        $Title
-    </button>
-    <span class="glossary-annotation-holder" class="hide">
-        <button class="close-popup">Close</button>
-        <dfn>$Title</dfn><br>
-        <span class="term-def">$ExplanationShort</span>
-        <a href="$Link">View the full glossary</a>
-    </span>
-</span>
+<%-- must stay as one line to allow punctutation to sit flush! --%><span class='glossary-button-and-annotation-holder'><button class="glossary-button">$Title</button><span class="glossary-annotation-holder" class="hide"><button class="close-popup">Close</button><dfn>$Title</dfn><br><span class="term-def">$ExplanationShort</span><a href="$Link">View the full glossary</a></span></span>
