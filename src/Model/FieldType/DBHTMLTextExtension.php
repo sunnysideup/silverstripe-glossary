@@ -48,27 +48,50 @@ class DBHTMLTextExtension extends Extension
                     } else {
                         $exceptionList[] = strtolower($term);
                     }
-
                 }
             );
 
-            // A soft replace html entities (SS editor exceptions)
-            $editorExceptionFrom = [
-                '%5B',
-                '%5D'
-            ];
-
-            $editorExceptionTo = [
-                '[',
-                ']'
-            ];
-
-            $newHTML = str_replace($editorExceptionFrom, $editorExceptionTo, $crawler->saveHTML());
+            $newHTML = $crawler->saveHTML();
         }
+
+        $newHTML = $this->softStrReplacement($newHTML);
 
         $field = DBField::create_field(DBHTMLText::class, $newHTML);
         $field->setProcessShortcodes(true);
 
         return $field;
+    }
+
+    /**
+     * A soft replace html entities (SS editor exceptions), newlines between punctuations
+     * @param  string $html
+     */
+    protected function softStrReplacement($html): string
+    {
+        $search = [
+            '%5B',
+            '%5D',
+            PHP_EOL . '.',
+            PHP_EOL . ',',
+            PHP_EOL . '!',
+            PHP_EOL . '?',
+            PHP_EOL . ':',
+            PHP_EOL . ';',
+            PHP_EOL . '-',
+        ];
+
+        $replace = [
+            '[',
+            ']',
+            '.',
+            ',',
+            '!',
+            '?',
+            ':',
+            ';',
+            '-',
+        ];
+
+        return str_replace($search, $replace, $html);
     }
 }
