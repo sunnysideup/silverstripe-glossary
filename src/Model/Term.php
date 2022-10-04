@@ -520,7 +520,11 @@ class Term extends DataObject
      */
     private static function list_to_array($string): array
     {
-        return array_map('trim', explode("\n", $string));
+        if ($string) {
+            return array_map('trim', explode("\n", $string));
+        }
+        
+        return [];
     }
 
     /**
