@@ -54,6 +54,7 @@ class Term extends DataObject
         'DoNotAnnotate' => 'Boolean(0)',
         'Archived' => 'Boolean(0)',
         'URLSegment' => 'Varchar',
+        'OncePerPage' => 'Boolean(0)',
     ];
 
     private static $has_many = [
@@ -230,6 +231,7 @@ class Term extends DataObject
         $labels['ListOfSynonyms'] = _t(self::class . '.ListOfSynonyms', 'List of Synonyms');
         $labels['Archived'] = _t(self::class . '.Archived', 'Archived');
         $labels['DoNotAnnotate'] = _t(self::class . '.DoNotAnnotate', 'Do not annotate');
+        $labels['OncePerPage'] = _t(self::class . '.OncePerPage', 'Once per page');
 
         return $labels;
     }
@@ -249,6 +251,7 @@ class Term extends DataObject
         $labels['Archived'] = _t(self::class . '.Archived_RightLabel', 'No longer in use. The reason you can archive it here is so you can record that a term is no longer in use rather than just removing it (with the risk of it being added again). ');
         $labels['DoNotAnnotate'] = _t(self::class . '.DoNotAnnotate_RightLabel', 'Show in glossary, but do not use for annotate in other pages.');
         $labels['ListOfSynonyms'] = _t(self::class . '.ListOfSynonyms_RightLabel', 'Similar words that should also be annotated.');
+        $labels['OncePerPage'] = _t(self::class . '.OncePerPage_RightLabel', 'For the whole page, it will only be annotated in the first instance of the word and not any following instances.');
 
         return $labels;
     }
@@ -298,6 +301,7 @@ class Term extends DataObject
                 $fields->dataFieldByName('IsCaseSensitive'),
                 $fields->dataFieldByName('DoNotAnnotate'),
                 $fields->dataFieldByName('Archived'),
+                $fields->dataFieldByName('OncePerPage'),
             ]
         );
 
@@ -499,6 +503,7 @@ class Term extends DataObject
                     //->addArrayDataValue('Title', $this->Title) // NOTE: Title is always overridden by the Replacer class
                     ->addArrayDataValue('Link', $this->getLink())
                     ->addArrayDataValue('ExplanationShort', $this->ExplanationShort)
+                    ->addArrayDataValue('OncePerPage', $this->OncePerPage)
                     ->addSynonyms($this->getArrayOfSynonyms())
                     ->addIgnoreBefores(self::list_to_array($this->IgnoreBefore))
                     ->addIgnoreAfters(self::list_to_array($this->IgnoreAfter))
