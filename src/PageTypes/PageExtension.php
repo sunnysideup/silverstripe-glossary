@@ -10,10 +10,12 @@ class PageExtension extends SiteTreeExtension
 {
     private static $db = [
         'NoAnnotationOnThisPage' => 'Boolean',
+        'OneAnnotationPerTerm' => 'Boolean',
     ];
 
     private static $field_labels = [
         'NoAnnotationOnThisPage' => 'Do not annotate this page',
+        'OneAnnotationPerTerm' => 'One annotation per term',
     ];
 
     /**
@@ -27,7 +29,10 @@ class PageExtension extends SiteTreeExtension
             'Root.Annotation',
             [
                 CheckboxField::create('NoAnnotationOnThisPage', $this->owner->fieldLabel('NoAnnotationOnThisPage')),
+                $oaptField = CheckboxField::create('OneAnnotationPerTerm', $this->owner->fieldLabel('OneAnnotationPerTerm')),
             ]
         );
+
+        $oaptField->setDescription(_t($this->owner->class . '.OneAnnotationPerTerm', 'Only annotate once per term for the whole page.'));
     }
 }
