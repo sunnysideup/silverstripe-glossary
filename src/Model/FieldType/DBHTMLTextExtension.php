@@ -54,6 +54,7 @@ class DBHTMLTextExtension extends Extension
                     $term = $element->filter('dfn')->first()->html();
 
                     if ($oncePerTermPerPage) {
+                        // Disable the annotation by replacing a term with annotation with a plain text term
                         if(in_array(strtolower($term), static::$exceptionList)) {
                             return $element->replaceWith($term);
                         } else {
@@ -61,6 +62,7 @@ class DBHTMLTextExtension extends Extension
                         }
                     }   
                     else {
+                        // Disable the annotation by replacing a term with annotation with a plain text term
                         if(in_array(strtolower($term), $exceptionList)) {
                             return $element->replaceWith($term);
                         } else {
