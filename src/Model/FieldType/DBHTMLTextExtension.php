@@ -2,6 +2,7 @@
 
 namespace Sunnysideup\Glossary\Model\FieldType;
 
+use Page;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Extension;
 use SilverStripe\ORM\FieldType\DBField;
@@ -11,6 +12,8 @@ use Wa72\HtmlPageDom\HtmlPageCrawler;
 
 class DBHTMLTextExtension extends Extension
 {
+    protected static $exceptionList = [];
+    
     public function Annotated(?int $pageID = 0)
     {
         return $this->AnnotateProcess($pageID);
@@ -24,29 +27,45 @@ class DBHTMLTextExtension extends Extension
     protected function AnnotateProcess(int $pageID, array $options = [])
     {
         $html = $this->owner->getValue();
-        if (! $pageID) {
-            $page = Director::get_current_page();
-            if ($page) {
-                $pageID = $page->ID;
-            }
+
+        $oncePerTermPerPage = false;
+
+        $page = $pageID ? Page::get_by_id($pageID) : Director::get_current_page();
+
+        if ($page) {
+            $pageID = $page->ID;
+            $oncePerTermPerPage = (bool)$page->OneAnnotationPerTerm;
         }
+
         $newHTML = Term::link_glossary_terms((string) $html, (int) $pageID);
+        
 
         // Once Per Term option
-        if(isset($options['once_per_term']) && $options['once_per_term'] === true) {
+        $oncePerTerm = $options['once_per_term'] ?? false;
+
+        if($oncePerTerm || $oncePerTermPerPage) {
             $crawler = HtmlPageCrawler::create($newHTML);
 
             $exceptionList = [];
 
             $crawler->filter('span.glossary-button-and-annotation-holder')->each(
-                function($element) use (&$exceptionList) {
+                function($element) use (&$exceptionList, $oncePerTermPerPage) {
 
                     $term = $element->filter('dfn')->first()->html();
 
-                    if(in_array(strtolower($term), $exceptionList)) {
-                        return $element->replaceWith($term);
-                    } else {
-                        $exceptionList[] = strtolower($term);
+                    if ($oncePerTermPerPage) {
+                        if(in_array(strtolower($term), static::$exceptionList)) {
+                            return $element->replaceWith($term);
+                        } else {
+                            static::$exceptionList[] = strtolower($term);
+                        }
+                    }   
+                    else {
+                        if(in_array(strtolower($term), $exceptionList)) {
+                            return $element->replaceWith($term);
+                        } else {
+                            $exceptionList[] = strtolower($term);
+                        }
                     }
                 }
             );
