@@ -14,7 +14,7 @@
     ],
     "require": {
         "silverstripe/cms": "^4.0 || ^5.0",
-        "wa72/htmlpagedom": "^2.0"
+        "wa72/htmlpagedom": "^3.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
