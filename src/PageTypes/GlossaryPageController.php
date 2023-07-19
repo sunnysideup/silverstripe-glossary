@@ -53,20 +53,33 @@ class GlossaryPageController extends PageController
             }
             Requirements::customScript(
                 '
-                    jQuery(document).ready(
-                        function() {
-                            var top = document.getElementById("' . $term->getAnchor() . '").offsetTop;
-                            jQuery("html, body").animate(
-                                {
-                                    scrollTop: top
-                                },
-                                700,
-                                function(){
-                                    jQuery("#' . $term->getAnchor() . '").addClass("highlight");
-                                }
-                            );
+                document.addEventListener("DOMContentLoaded", function() {
+                    var top = document.getElementById("' . $term->getAnchor() . '").offsetTop;
+
+                    var scroll = function(duration, callback) {
+                        var start = document.documentElement.scrollTop || document.body.scrollTop;
+                        var change = top - start;
+                        var startTime = null;
+
+                        function animateScroll(timestamp) {
+                            if (!startTime) startTime = timestamp;
+                            var progress = timestamp - startTime;
+                            var percent = Math.min(progress / duration, 1);
+                            document.documentElement.scrollTop = document.body.scrollTop = start + (change * percent);
+                            if (progress < duration) {
+                                window.requestAnimationFrame(animateScroll);
+                            } else if (callback && typeof(callback) === \'function\') {
+                                callback();
+                            }
                         }
-                    );
+                        window.requestAnimationFrame(animateScroll);
+                    };
+
+                    scroll(700, function(){
+                        document.getElementById("' . $term->getAnchor() . '").classList.add("highlight");
+                    });
+                });
+
                     ',
                 'TermURLSegment'
             );
