@@ -64,7 +64,7 @@ class Replacer
         // $html = iconv('utf-8','ascii//TRANSLIT', $html);
 
         // do NOT process between <a> and </a>
-        return self::for_each_captures_all('/<a\b\s*[^>]*>(.*?)<\/a>/', $html, 1, function ($outerAnchorHtml) {
+        return self::for_each_captures_all('/<a\b\s*(.*?)<\/a>/', $html, 1, function ($outerAnchorHtml) {
             // do NOT process inside *.donotannotate
             return self::for_each_captures_all('/([^=]*)([^(a-z|A-Z|0-9|\-|_)])donotannotate("|([^(a-z|A-Z|0-9|\-|_)]).*")/u', $outerAnchorHtml, 1, function ($outerDoNotAnnotate) {
                 // do NOT process inside shortcodes
