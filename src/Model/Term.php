@@ -169,7 +169,7 @@ class Term extends DataObject
         if (is_array($requiredFields)) {
             foreach ($requiredFields as $field) {
                 $value = $this->{$field};
-                if (! $value) {
+                if (!$value) {
                     $fieldWithoutID = $field;
                     if ('ID' === substr($fieldWithoutID, -2)) {
                         $fieldWithoutID = substr($fieldWithoutID, 0, -2);
@@ -188,8 +188,7 @@ class Term extends DataObject
                     $count = self::get()
                         ->filter([$field => $value])
                         ->exclude(['ID' => $id])
-                        ->count()
-                    ;
+                        ->count();
                     if ($count > 0) {
                         $myName = $fieldLabels[$field];
                         $result->addError(
@@ -281,7 +280,7 @@ class Term extends DataObject
         $rightFieldDescriptions = $this->fieldLabelsRight();
         foreach ($rightFieldDescriptions as $field => $desc) {
             $formField = $fields->DataFieldByName($field);
-            if (! $formField) {
+            if (!$formField) {
                 $formField = $fields->DataFieldByName($field . 'ID');
             }
             if ($formField) {
@@ -318,8 +317,7 @@ class Term extends DataObject
             foreach ([$fieldA, $fieldB] as $tempField) {
                 $tempField
                     ->getConfig()
-                    ->removeComponentsByType(GridFieldAddNewButton::class)
-                ;
+                    ->removeComponentsByType(GridFieldAddNewButton::class);
             }
             $fields->removeFieldFromTab('Root', 'DoNotAnnotateOn');
             $fields->removeFieldFromTab('Root', 'OnlyAnnotateOn');
@@ -357,7 +355,7 @@ class Term extends DataObject
     public function getFirstLetter(): string
     {
         if ($this->Title) {
-            return strtoupper($this->Title[0]);
+            return mb_strtoupper(mb_substr($this->Title, 0, 1));
         }
 
         return '';
@@ -458,11 +456,11 @@ class Term extends DataObject
     protected function performReadonlyTransformationForFields(FieldList $fields, string $rel)
     {
         $arrayOfFieldNames = $this->config()->get($rel);
-        if(! empty($arrayOfFieldNames)) {
+        if (!empty($arrayOfFieldNames)) {
             $arrayOfFieldNameKeys = array_keys($arrayOfFieldNames);
             foreach ($arrayOfFieldNameKeys as $tempField) {
                 $field = $fields->dataFieldByName($tempField);
-                if($field) {
+                if ($field) {
                     $fields->replaceField($tempField, $field->performReadonlyTransformation());
                 }
             }
@@ -494,7 +492,7 @@ class Term extends DataObject
         $allowed = $this->isAnnotationEnabled($pageID);
         if ($allowed) {
             // create and cache a replacer
-            if (! $this->replacer) {
+            if (!$this->replacer) {
                 $this->replacer = ReplacerBuilder::from($this->Title)
                     //->addArrayDataValue('Title', $this->Title) // NOTE: Title is always overridden by the Replacer class
                     ->addArrayDataValue('Link', $this->getLink())
@@ -503,8 +501,7 @@ class Term extends DataObject
                     ->addIgnoreBefores(self::list_to_array($this->IgnoreBefore))
                     ->addIgnoreAfters(self::list_to_array($this->IgnoreAfter))
                     ->caseSensitive($this->IsCaseSensitive)
-                    ->build()
-                ;
+                    ->build();
             }
             // run
             $html = $this->replacer->replace($html);
@@ -523,7 +520,7 @@ class Term extends DataObject
         if ($string) {
             return array_map('trim', explode("\n", $string));
         }
-        
+
         return [];
     }
 
@@ -539,7 +536,7 @@ class Term extends DataObject
             return false;
         }
         // always allow if the page ID is null
-        if (! $pageID) {
+        if (!$pageID) {
             return true;
         }
 
@@ -548,11 +545,11 @@ class Term extends DataObject
         $blackList = $this->getArrayOfDoNotAnnotateOnIDs();
         if (count($whiteList) > 0) {
             // if so, see if the page is in the list and NOT in blacklist ...
-            return in_array($pageID, $whiteList, true) && ! in_array($pageID, $blackList, true);
+            return in_array($pageID, $whiteList, true) && !in_array($pageID, $blackList, true);
         }
 
         // see if the page is in the black list
 
-        return ! in_array($pageID, $blackList, true);
+        return !in_array($pageID, $blackList, true);
     }
 }
