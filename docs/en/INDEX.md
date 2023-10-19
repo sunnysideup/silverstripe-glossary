@@ -212,3 +212,32 @@ cite {
 
 
 ```
+
+We sometimes found annotation holders would clip off the sides of the page in one project, and used javascript like this to resolve the issue:
+```js
+
+//keep annotation popups within the bounds of the screen
+
+export default {
+  
+    init: function() {
+        const annotationHolders = document.querySelectorAll('.glossary-annotation-holder')
+        const container = document.querySelector('div.container')
+        const containerBounding = container.getBoundingClientRect();
+        for (let i = 0; i < annotationHolders.length; i++) {
+            let annotation = annotationHolders[i];
+            let bounding = annotation.getBoundingClientRect();
+
+            if (bounding.left < containerBounding.left) {
+                annotation.classList.add('force-fit-left');
+            }
+            else if (bounding.right > containerBounding.right) {
+                annotation.classList.add('force-fit-right');
+            }
+        }
+    }
+  
+  }
+  
+
+```
