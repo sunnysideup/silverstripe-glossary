@@ -366,6 +366,11 @@ class Term extends DataObject
         return 'position-for-' . Convert::raw2att($this->URLSegment);
     }
 
+    public function Link() : string
+    {
+        return $this->getLink();
+    }
+
     /**
      * @return string
      */
