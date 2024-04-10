@@ -442,8 +442,8 @@ class Term extends DataObject
         $this->Title = trim($this->Title);
         $this->URLSegment = strtolower(urlencode($this->Title));
 
-        $this->IgnoreBefore = str_ireplace($this->Title, '', $this->IgnoreBefore);
-        $this->IgnoreAfter = str_ireplace($this->Title, '', $this->IgnoreAfter);
+        $this->IgnoreBefore = str_ireplace($this->Title, '', (string) $this->IgnoreBefore);
+        $this->IgnoreAfter = str_ireplace($this->Title, '', (string) $this->IgnoreAfter);
         //...
     }
 
