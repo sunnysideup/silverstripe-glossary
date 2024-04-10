@@ -254,15 +254,15 @@ class Term extends DataObject
 
     public function CMSEditLink()
     {
-        return $this->modelAdminSingleton()->Link() .
-            $this->classNameForCMS() . '/EditForm/field/' .
+        return $this->modelAdminSingleton()->getLinkForModelClass($this->ClassName) .
+            '/EditForm/field/' .
             $this->classNameForCMS() . '/item/' . $this->ID . '/edit';
     }
 
     public function CMSAddLink()
     {
-        return $this->modelAdminSingleton()->Link() .
-            $this->classNameForCMS() . '/EditForm/field/' .
+        return $this->modelAdminSingleton()->getLinkForModelClass($this->ClassName) .
+            '/EditForm/field/' .
             $this->classNameForCMS() . '/item/new';
     }
 
