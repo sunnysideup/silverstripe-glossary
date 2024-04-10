@@ -439,8 +439,8 @@ class Term extends DataObject
     protected function onBeforeWrite()
     {
         parent::onBeforeWrite();
-        $this->Title = trim($this->Title);
-        $this->URLSegment = strtolower(urlencode($this->Title));
+        $this->Title = trim((string) $this->Title);
+        $this->URLSegment = strtolower(urlencode((string) $this->Title));
 
         $this->IgnoreBefore = str_ireplace($this->Title, '', (string) $this->IgnoreBefore);
         $this->IgnoreAfter = str_ireplace($this->Title, '', (string) $this->IgnoreAfter);
