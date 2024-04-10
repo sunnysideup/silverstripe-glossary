@@ -10,7 +10,7 @@ use SilverStripe\ORM\DataObject;
 
 class Synonym extends DataObject
 {
-//     use SiteTreeCanEdit;
+    //     use SiteTreeCanEdit;
 
     private static $table_name = 'GlossarySynonym';
 
@@ -197,8 +197,7 @@ class Synonym extends DataObject
 
     public function CMSListLink()
     {
-        return $this->modelAdminSingleton()->Link() .
-            $this->classNameForCMS();
+        return $this->modelAdminSingleton()->getLinkForModelClass($this->ClassName);
     }
 
     public function getCMSFields()
