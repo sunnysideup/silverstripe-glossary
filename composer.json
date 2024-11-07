@@ -1,6 +1,6 @@
 {
     "name": "sunnysideup/glossary",
-    "description": "Adds annotation / glossary to any term in your Silverstripe site",
+    "description": "Adds annotation / glossary to any term in your Silverstripe site.",
     "type": "silverstripe-vendormodule",
     "keywords": [
         "Silverstripe-CMS",
