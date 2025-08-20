@@ -6,6 +6,7 @@ use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\View\ArrayData;
+use DOMDocument;
 
 class Replacer
 {
@@ -61,11 +62,11 @@ class Replacer
      */
     public function replace(string $html): string
     {
-        // 1) Parse HTML
+        // 1) Parse HTML as UTF-8 (do NOT pre-encode the whole string)
         $dom = new \DOMDocument('1.0', 'UTF-8');
         libxml_use_internal_errors(true);
-        // The XML prolog trick keeps UTF-8 and avoids adding <html><body>
-        $dom->loadHTML('<?xml encoding="utf-8" ?>' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        // (A) Provide encoding hint so libxml parses UTF-8 correctly
+        $dom->loadHTML('<?xml encoding="UTF-8" ?>' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         libxml_clear_errors();
 
         $xpath = new \DOMXPath($dom);
@@ -85,64 +86,6 @@ class Replacer
             ']'
         );
 
-        // Helper to annotate *one* text chunk while preserving shortcodes.
-        $annotateChunk = function (\DOMDocument $domDoc, string $text) {
-            // Split out shortcodes so we never touch them
-            $parts = preg_split('/(\[[^\]]*\])/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
-
-            $frag = $domDoc->createDocumentFragment();
-
-            foreach ($parts as $i => $part) {
-                $isShortcode = ($i % 2) === 1;
-                if ($isShortcode) {
-                    // Keep shortcode untouched as plain text
-                    $frag->appendChild($domDoc->createTextNode($part));
-                    continue;
-                }
-
-                // Further split non-shortcode text by glossary pattern.
-                // Because your pattern has a capturing group for the term, PREG_SPLIT_DELIM_CAPTURE
-                // yields [text, TERM, text, TERM, ...]
-                $pieces = preg_split($this->pattern, $part, -1, PREG_SPLIT_DELIM_CAPTURE);
-
-                // If no split (no matches), just append as text and continue
-                if ($pieces === null || count($pieces) === 1) {
-                    $frag->appendChild($domDoc->createTextNode($part));
-                    continue;
-                }
-
-                foreach ($pieces as $j => $piece) {
-                    $isCapturedTerm = ($j % 2) === 1; // odd indices are the captured ( ... ) group in $this->pattern
-                    if (!$isCapturedTerm) {
-                        // Plain text → append safely
-                        if ($piece !== '') {
-                            $frag->appendChild($domDoc->createTextNode($piece));
-                        }
-                    } else {
-                        // Matched term → render your template and append as HTML
-                        $array = array_merge($this->dataList, ['Title' => $piece]);
-                        $arrayData = ArrayData::create($array);
-                        $htmlFragment = trim($arrayData->renderWith('GlossaryItemAsPopUp'));
-
-                        if ($htmlFragment !== '') {
-                            $tmp = new \DOMDocument();
-                            libxml_use_internal_errors(true);
-                            $tmp->loadHTML('<div>' . $htmlFragment . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-                            libxml_clear_errors();
-
-                            $wrapper = $tmp->getElementsByTagName('div')->item(0);
-                            if ($wrapper) {
-                                foreach ($wrapper->childNodes as $child) {
-                                    $frag->appendChild($domDoc->importNode($child, true));
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }
-            return $frag;
-        };
 
         // 3) Replace eligible text nodes with annotated fragments
         // Convert NodeList to array first because we’ll mutate the DOM
@@ -155,8 +98,7 @@ class Replacer
                 continue;
             }
 
-            $fragment = $annotateChunk($dom, $original);
-
+            $fragment = $this->annotateChunk($dom, $original);
             // Replace text node with our mixed (text + HTML) fragment
             $node->parentNode->replaceChild($fragment, $node);
         }
@@ -164,8 +106,69 @@ class Replacer
         // 4) Output HTML
         $html = $dom->saveHTML();
         // hack to remove the xml comment... 
-        return str_replace('<?xml encoding="utf-8" ?>', '', $html);
+        return str_replace('<?xml encoding="UTF-8" ?>', '', $html);
     }
+
+    protected function annotateChunk(DOMDocument $domDoc, string $text)
+    {
+        // Split out shortcodes so we never touch them
+        $parts = preg_split('/(\[[^\]]*\])/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $frag = $domDoc->createDocumentFragment();
+
+        foreach ($parts as $i => $part) {
+            $isShortcode = ($i % 2) === 1;
+            if ($isShortcode) {
+                // Keep shortcode untouched as plain text
+                $frag->appendChild($domDoc->createTextNode($part));
+                continue;
+            }
+
+            // Further split non-shortcode text by glossary pattern.
+            // Because your pattern has a capturing group for the term, PREG_SPLIT_DELIM_CAPTURE
+            // yields [text, TERM, text, TERM, ...]
+            $pieces = preg_split($this->pattern, $part, -1, PREG_SPLIT_DELIM_CAPTURE);
+            // If no split (no matches), just append as text and continue
+            if ($pieces === null || count($pieces) === 1) {
+                $frag->appendChild($domDoc->createTextNode($part));
+                continue;
+            }
+
+            foreach ($pieces as $j => $piece) {
+                $isCapturedTerm = ($j % 2) === 1; // odd indices are the captured ( ... ) group in $this->pattern
+                if (!$isCapturedTerm) {
+                    // Plain text → append safely
+                    if ($piece !== '') {
+                        $frag->appendChild($domDoc->createTextNode($piece));
+                    }
+                } else {
+                    // Matched term → render your template and append as HTML
+                    $array = array_merge($this->dataList, ['Title' => $piece]);
+                    $arrayData = ArrayData::create($array);
+                    $htmlFragment = trim($arrayData->renderWith('GlossaryItemAsPopUp'));
+
+                    if ($htmlFragment !== '') {
+                        // (B) Parse the fragment with an explicit UTF-8 hint
+                        $tmp = new \DOMDocument('1.0', 'UTF-8');
+                        libxml_use_internal_errors(true);
+                        $tmp->loadHTML(
+                            '<?xml encoding="UTF-8" ?><div>' . $htmlFragment . '</div>',
+                            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+                        );
+                        libxml_clear_errors();
+
+                        $wrapper = $tmp->getElementsByTagName('div')->item(0);
+                        if ($wrapper) {
+                            foreach (iterator_to_array($wrapper->childNodes) as $child) {
+                                $frag->appendChild($domDoc->importNode($child, true));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $frag;
+    }
+
 
 
 
