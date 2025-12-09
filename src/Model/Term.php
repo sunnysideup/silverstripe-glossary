@@ -46,7 +46,7 @@ class Term extends DataObject
 
     private static $db = [
         'Title' => 'Varchar(255)',
-        'ExplanationShort' => 'Varchar(255)',
+        'ExplanationShort' => 'Text',
         'ExplanationFull' => 'HTMLText',
         'IgnoreAfter' => 'Text',
         'IgnoreBefore' => 'Text',

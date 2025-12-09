@@ -39,7 +39,7 @@ class GlossaryPage extends Page
                 //remove all fields and add a link to glossary model admin
                 $term = Injector::inst()->get(Term::class);
                 $fields->addFieldToTab(
-                    'Root.Main',
+                    'Root.Terms',
                     LiteralField::create(
                         'GlossaryMessage',
                         '<h2>
