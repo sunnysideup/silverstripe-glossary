@@ -7,6 +7,8 @@ use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\View\ArrayData;
 use DOMDocument;
+use DOMXPath;
+use SilverStripe\CMS\Model\SiteTree;
 
 class Replacer
 {
@@ -32,7 +34,8 @@ class Replacer
         array $synonymList,
         array $ignoreBeforeList,
         array $ignoreAfterList,
-        bool $isCaseSensitive
+        bool $isCaseSensitive,
+        ?SiteTree $page = null
     ) {
         $termsAll = self::escape_str($term);
 
@@ -63,13 +66,13 @@ class Replacer
     public function replace(string $html): string
     {
         // 1) Parse HTML as UTF-8 (do NOT pre-encode the whole string)
-        $dom = new \DOMDocument('1.0', 'UTF-8');
+        $dom = new DOMDocument('1.0', 'UTF-8');
         libxml_use_internal_errors(true);
         // (A) Provide encoding hint so libxml parses UTF-8 correctly
         $dom->loadHTML('<?xml encoding="UTF-8" ?>' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         libxml_clear_errors();
 
-        $xpath = new \DOMXPath($dom);
+        $xpath = new DOMXPath($dom);
 
         // 2) Select text nodes that are safe to annotate
         //    - not inside .donotannotate
@@ -83,7 +86,7 @@ class Replacer
                 'not(ancestor::*[contains(concat(" ", normalize-space(@class), " "), " glossary-button-and-annotation-holder ")]) and ' .
                 'not(ancestor::*[contains(concat(" ", normalize-space(@class), " "), " glossary-annotation-holder ")]) and ' .
                 'not(ancestor::*[contains(concat(" ", normalize-space(@class), " "), " glossary-button ")])' .
-            ']'
+                ']'
         );
 
 
@@ -105,7 +108,7 @@ class Replacer
 
         // 4) Output HTML
         $html = $dom->saveHTML();
-        // hack to remove the xml comment... 
+        // hack to remove the xml comment...
         return str_replace('<?xml encoding="UTF-8" ?>', '', $html);
     }
 
@@ -148,7 +151,7 @@ class Replacer
 
                     if ($htmlFragment !== '') {
                         // (B) Parse the fragment with an explicit UTF-8 hint
-                        $tmp = new \DOMDocument('1.0', 'UTF-8');
+                        $tmp = new DOMDocument('1.0', 'UTF-8');
                         libxml_use_internal_errors(true);
                         $tmp->loadHTML(
                             '<?xml encoding="UTF-8" ?><div>' . $htmlFragment . '</div>',
@@ -190,9 +193,9 @@ class Replacer
             return '';
         }
 
-        if($individual) {
+        if ($individual) {
             $return = '';
-            foreach($array as $item) {
+            foreach ($array as $item) {
                 $return .= $prefix . self::escape_str($item) . $suffix;
             }
             return $return;

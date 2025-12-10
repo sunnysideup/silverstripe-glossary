@@ -2,6 +2,7 @@
 
 namespace Sunnysideup\Glossary\API;
 
+use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injectable;
@@ -16,32 +17,34 @@ class ReplacerBuilder
     /**
      * @var string
      */
-    private $term;
+    private ?string $term;
 
     /**
      * @var array
      */
-    private $dataList = [];
+    private ?array $dataList = [];
 
     /**
      * @var array
      */
-    private $synonymList = [];
+    private ?array $synonymList = [];
 
     /**
      * @var array
      */
-    private $ignoreBeforeList = [];
+    private ?array $ignoreBeforeList = [];
 
     /**
      * @var array
      */
-    private $ignoreAfterList = [];
+    private ?array $ignoreAfterList = [];
 
     /**
      * @var bool
      */
-    private $isCaseSensitive = false;
+    private ?bool $isCaseSensitive = false;
+
+    private ?SiteTree $page = null;
 
     public function __construct($term)
     {
@@ -93,6 +96,13 @@ class ReplacerBuilder
         return $this;
     }
 
+    public function addPage(?SiteTree $page = null): self
+    {
+        $this->page = $page;
+
+        return $this;
+    }
+
     public function caseSensitive($caseSens = true): self
     {
         $this->isCaseSensitive = $caseSens;
@@ -108,7 +118,8 @@ class ReplacerBuilder
             $this->synonymList,
             $this->ignoreBeforeList,
             $this->ignoreAfterList,
-            $this->isCaseSensitive
+            $this->isCaseSensitive,
+            $this->page
         );
     }
 }

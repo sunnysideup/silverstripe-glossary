@@ -4,6 +4,7 @@ namespace Sunnysideup\Glossary\Model;
 
 use Page;
 use SilverStripe\Admin\CMSMenu;
+use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\FieldList;
@@ -373,9 +374,10 @@ class Term extends DataObject
     /**
      * @return string
      */
-    public function getLink()
+    public function getLink(?GlossaryPage $alternativeGlossaryPage = null)
     {
-        $page = DataObject::get_one(GlossaryPage::class);
+        $page = $alternativeGlossaryPage ?: DataObject::get_one(GlossaryPage::class);
+
         if ($page) {
             return $page->LinkToTitle($this);
         }
@@ -415,11 +417,11 @@ class Term extends DataObject
 
     /**
      * @param string $html   html to be annotated
-     * @param int    $pageID
+     * @param SiteTree|null    $page
      *
      * @return string (html)
      */
-    public static function link_glossary_terms(string $html, ?int $pageID = 0): string
+    public static function link_glossary_terms(string $html, ?SiteTree $page = null): string
     {
         if (null === self::$_glossary_cache) {
             self::$_glossary_cache = self::get()->filter(
@@ -430,7 +432,7 @@ class Term extends DataObject
             );
         }
         foreach (self::$_glossary_cache as $term) {
-            $html = $term->linkGlossaryTermsWorker($html, $pageID);
+            $html = $term->linkGlossaryTermsWorker($html, $page);
         }
 
         return $html;
@@ -489,22 +491,28 @@ class Term extends DataObject
      * Annotate html by inserting hyperlinks of terms.
      *
      * @param string $html
-     * @param int    $pageID
+     * @param SiteTree|null    $page
      */
-    private function linkGlossaryTermsWorker($html, $pageID): string
+    private function linkGlossaryTermsWorker(?string $html = null, ?SiteTree $page = null): string
     {
-        $allowed = $this->isAnnotationEnabled($pageID);
+        $html = (string) $html;
+        $allowed = $this->isAnnotationEnabled($page->ID ?? 0);
+        $alternativeGlossaryPage = null;
+        if ($page && $page->hasMethod('getAlternativeGlossaryPage')) {
+            $alternativeGlossaryPage = $page->getAlternativeGlossaryPage();
+        }
         if ($allowed) {
             // create and cache a replacer
             if (!$this->replacer) {
                 $this->replacer = ReplacerBuilder::from($this->Title)
                     //->addArrayDataValue('Title', $this->Title) // NOTE: Title is always overridden by the Replacer class
-                    ->addArrayDataValue('Link', $this->getLink())
+                    ->addArrayDataValue('Link', $this->getLink($alternativeGlossaryPage))
                     ->addArrayDataValue('ExplanationShort', $this->ExplanationShort)
                     ->addSynonyms($this->getArrayOfSynonyms())
                     ->addIgnoreBefores(self::list_to_array($this->IgnoreBefore))
                     ->addIgnoreAfters(self::list_to_array($this->IgnoreAfter))
                     ->caseSensitive($this->IsCaseSensitive)
+                    ->addPage($page)
                     ->build();
             }
             // run
@@ -531,7 +539,7 @@ class Term extends DataObject
     /**
      * see if the page is allowed to be annotated.
      */
-    private function isAnnotationEnabled(int $pageID): bool
+    public function isAnnotationEnabled(int $pageID): bool
     {
         if ($this->DoNotAnnotate) {
             return false;

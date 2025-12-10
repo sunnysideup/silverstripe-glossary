@@ -13,7 +13,7 @@ use Wa72\HtmlPageDom\HtmlPageCrawler;
 class DBHTMLTextExtension extends Extension
 {
     protected static $exceptionList = [];
-    
+
     public function Annotated(?int $pageID = 0)
     {
         return $this->AnnotateProcess($pageID);
@@ -33,37 +33,35 @@ class DBHTMLTextExtension extends Extension
         $page = $pageID ? Page::get_by_id($pageID) : Director::get_current_page();
 
         if ($page) {
-            $pageID = $page->ID;
             $oncePerTermPerPage = (bool)$page->OneAnnotationPerTerm;
         }
 
-        $newHTML = Term::link_glossary_terms((string) $html, (int) $pageID);
-        
+        $newHTML = Term::link_glossary_terms((string) $html,  $page);
+
 
         // Once Per Term option
         $oncePerTerm = $options['once_per_term'] ?? false;
 
-        if($oncePerTerm || $oncePerTermPerPage) {
+        if ($oncePerTerm || $oncePerTermPerPage) {
             $crawler = HtmlPageCrawler::create($newHTML);
 
             $exceptionList = [];
 
             $crawler->filter('span.glossary-button-and-annotation-holder')->each(
-                function($element) use (&$exceptionList, $oncePerTermPerPage) {
+                function ($element) use (&$exceptionList, $oncePerTermPerPage) {
 
                     $term = $element->filter('dfn')->first()->html();
 
                     if ($oncePerTermPerPage) {
                         // Disable the annotation by replacing a term with annotation with a plain text term
-                        if(in_array(strtolower($term), static::$exceptionList)) {
+                        if (in_array(strtolower($term), static::$exceptionList)) {
                             return $element->replaceWith($term);
                         } else {
                             static::$exceptionList[] = strtolower($term);
                         }
-                    }   
-                    else {
+                    } else {
                         // Disable the annotation by replacing a term with annotation with a plain text term
-                        if(in_array(strtolower($term), $exceptionList)) {
+                        if (in_array(strtolower($term), $exceptionList)) {
                             return $element->replaceWith($term);
                         } else {
                             $exceptionList[] = strtolower($term);

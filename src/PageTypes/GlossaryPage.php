@@ -12,6 +12,8 @@ class GlossaryPage extends Page
 {
     private static $description = 'Provides definitions of all Glossary (Annotated) Terms';
 
+    private static $table_name = 'GlossaryPage';
+
     private static $singular_name = 'Glossary Page';
 
     private static $plural_name = 'Glossary Pages';
@@ -21,6 +23,7 @@ class GlossaryPage extends Page
     private static $defaults = [
         'NoAnnotationOnThisPage' => true,
     ];
+
 
     public function LinkToTitle($term)
     {
@@ -55,6 +58,15 @@ class GlossaryPage extends Page
             }
         );
 
-        return parent::getCMSFields();
+
+        $fields = parent::getCMSFields();
+        $fields->removeFieldByName('NoAnnotationOnThisPage');
+        return $fields;
+    }
+
+    public function onBeforeWrite()
+    {
+        $this->NoAnnotationOnThisPage = true;
+        return parent::onBeforeWrite();
     }
 }

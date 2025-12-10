@@ -3,6 +3,7 @@
 namespace Sunnysideup\Glossary\PageTypes;
 
 use PageController;
+use PharIo\Manifest\Requirement;
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\GroupedList;
 use SilverStripe\View\Requirements;
@@ -51,36 +52,11 @@ class GlossaryPageController extends PageController
                     'GlossaryItemAsPopUp',
                 ]);
             }
+            Requirements::javascript('sunnysideup/glossary: client/dist/app.js');
+            Requirements::themedCSS('sunnysideup/glossary: client/dist/main.css');
             Requirements::customScript(
                 '
-                document.addEventListener("DOMContentLoaded", function() {
-                    var top = document.getElementById("' . $term->getAnchor() . '").offsetTop;
-
-                    var scroll = function(duration, callback) {
-                        var start = document.documentElement.scrollTop || document.body.scrollTop;
-                        var change = top - start;
-                        var startTime = null;
-
-                        function animateScroll(timestamp) {
-                            if (!startTime) startTime = timestamp;
-                            var progress = timestamp - startTime;
-                            var percent = Math.min(progress / duration, 1);
-                            document.documentElement.scrollTop = document.body.scrollTop = start + (change * percent);
-                            if (progress < duration) {
-                                window.requestAnimationFrame(animateScroll);
-                            } else if (callback && typeof(callback) === \'function\') {
-                                callback();
-                            }
-                        }
-                        window.requestAnimationFrame(animateScroll);
-                    };
-
-                    scroll(700, function(){
-                        document.getElementById("' . $term->getAnchor() . '").classList.add("highlight");
-                    });
-                });
-
-                    ',
+                window.glossaryPageAnchorSetByPHP = "' . $term->getAnchor() . '";',
                 'TermURLSegment'
             );
 
