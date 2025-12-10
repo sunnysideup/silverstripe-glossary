@@ -30,11 +30,6 @@ class GlossaryPage extends Page
         return $this->Link('showterm/' . $term->URLSegment . '/');
     }
 
-    public function canCreate($member = null, $context = [])
-    {
-        return self::get()->count() ? false : parent::canCreate($member, $context);
-    }
-
     public function getCMSFields()
     {
         $this->beforeUpdateCMSFields(
