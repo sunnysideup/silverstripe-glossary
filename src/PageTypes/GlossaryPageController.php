@@ -16,6 +16,13 @@ class GlossaryPageController extends PageController
         'showterm',
     ];
 
+    public function init()
+    {
+        parent::init();
+        Requirements::javascript('sunnysideup/glossary: client/dist/app.js');
+        Requirements::css('sunnysideup/glossary: client/dist/main.css');
+    }
+
     public function getTerms()
     {
         return Term::get()->exclude(['Archived' => 1])->sort(['Title' => 'ASC']);
@@ -52,8 +59,6 @@ class GlossaryPageController extends PageController
                     'GlossaryItemAsPopUp',
                 ]);
             }
-            Requirements::javascript('sunnysideup/glossary: client/dist/app.js');
-            Requirements::themedCSS('sunnysideup/glossary: client/dist/main.css');
             Requirements::customScript(
                 '
                 window.glossaryPageAnchorSetByPHP = "' . $term->getAnchor() . '";',

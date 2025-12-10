@@ -61,7 +61,7 @@ class GlossaryPage extends Page
 
 
         $fields = parent::getCMSFields();
-        $fields->removeFieldByName('NoAnnotationOnThisPage');
+        $fields->removeByName('NoAnnotationOnThisPage');
         return $fields;
     }
 
