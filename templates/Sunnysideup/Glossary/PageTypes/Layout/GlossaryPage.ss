@@ -1,4 +1,5 @@
 
+<%-- must have the index-for-glossary class for JS --%>
 <div class="index-for-glossary">
     <% loop $GroupedTerms.GroupedBy(FirstLetter) %>
     <a href="#glossary-entry-for-$FirstLetter">$FirstLetter</a>
@@ -7,6 +8,7 @@
 
 <div class="terms-outer">
     <% loop $GroupedTerms.GroupedBy(FirstLetter) %>
+    <%-- must have the glossary-separator class for JS --%>
     <div class="glossary-separator"  id="glossary-entry-for-$FirstLetter">
         <header class="terms-header">
             <h3>$FirstLetter</h3>

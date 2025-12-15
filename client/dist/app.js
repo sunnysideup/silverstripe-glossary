@@ -62,23 +62,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         index.addEventListener('click', e => {
-            if (e.target.tagName !== 'A') return
+            const el = e.target
+            if (el.tagName !== 'A') return
             e.preventDefault()
 
-            const id = e.target.getAttribute('href').split('#')[1]
+            const id = el.getAttribute('href').split('#')[1]
             if (!id) return
 
             // Toggle off if clicking the same letter
             if (activeId === id) {
+                el.classList.remove('current')
                 showAll()
                 return
             }
+            el.classList.add('current')
 
             // Activate new letter filter
             showOnly(id)
 
-            const el = document.getElementById(id)
-            if (el) el.scrollIntoView({ behavior: 'smooth' })
+            const section = document.getElementById(id)
+            if (section) section.scrollIntoView({ behavior: 'smooth' })
         })
     }
 
