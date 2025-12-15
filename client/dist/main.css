@@ -1,0 +1,16 @@
+.index-for-glossary {
+    a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.2em;
+        height: 2.2em;
+        border-radius: 50%;
+        text-decoration: none;
+        background-color: #f0f0f0;
+    }
+
+    a.current {
+        border: 2px solid currentColor;
+    }
+}
