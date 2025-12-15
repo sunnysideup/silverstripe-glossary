@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 <%-- must have the index-for-glossary class for JS --%>
 <div class="index-for-glossary">
     <% loop $GroupedTerms.GroupedBy(FirstLetter) %>
@@ -25,3 +26,6 @@
     </div>
     <% end_loop %>
 </div>
+=======
+<% include Sunnysideup/Glossary/PageTypes/Includes/GlossaryPageInner %>
+>>>>>>> df1c063018507e7f2306f743b8b55ed4a441df9e
