@@ -38,12 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
     }
-
     const showHideLetters = () => {
         const index = document.querySelector('.index-for-glossary')
         const sections = document.querySelectorAll('.glossary-separator')
+        const links = index?.querySelectorAll('a')
 
-        if (!index) return
+        if (!index || !links) return
 
         let activeId = null
 
@@ -61,27 +61,31 @@ document.addEventListener('DOMContentLoaded', () => {
             activeId = null
         }
 
+        const clearCurrent = () => {
+            links.forEach(a => a.classList.remove('current'))
+        }
+
         index.addEventListener('click', e => {
             const el = e.target
             if (el.tagName !== 'A') return
+
             e.preventDefault()
 
-            const id = el.getAttribute('href').split('#')[1]
+            const id = el.getAttribute('href')?.split('#')[1]
             if (!id) return
 
-            // Toggle off if clicking the same letter
+            // toggle off same letter
             if (activeId === id) {
-                el.classList.remove('current')
+                clearCurrent()
                 showAll()
                 return
             }
-            el.classList.add('current')
 
-            // Activate new letter filter
+            clearCurrent()
+            el.classList.add('current')
             showOnly(id)
 
-            const section = document.getElementById(id)
-            if (section) section.scrollIntoView({ behavior: 'smooth' })
+            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
         })
     }
 
