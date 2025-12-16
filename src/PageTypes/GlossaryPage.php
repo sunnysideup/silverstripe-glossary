@@ -32,7 +32,7 @@ class GlossaryPage extends Page
 
     public function canCreate($member = null, $context = [])
     {
-        return self::get()->exists() ? false : parent::canCreate($member, $context);
+        return GlossaryPage::get()->filter(['ClassName' => GlossaryPage::class])->exists() ? false : parent::canCreate($member, $context);
     }
 
 
