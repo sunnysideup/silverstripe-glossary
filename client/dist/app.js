@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             el.classList.add('current')
             showOnly(id)
 
-            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+            index?.scrollIntoView({ behavior: 'smooth' })
         })
     }
 
