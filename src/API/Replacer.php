@@ -2,10 +2,11 @@
 
 namespace Sunnysideup\Glossary\API;
 
+use SilverStripe\Model\ArrayData;
+use DOMText;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injectable;
-use SilverStripe\View\ArrayData;
 use DOMDocument;
 use DOMXPath;
 use SilverStripe\CMS\Model\SiteTree;
@@ -93,7 +94,7 @@ class Replacer
         // 3) Replace eligible text nodes with annotated fragments
         // Convert NodeList to array first because we’ll mutate the DOM
         foreach (iterator_to_array($nodes) as $node) {
-            /** @var \DOMText $node */
+            /** @var DOMText $node */
             $original = $node->nodeValue;
 
             // Quick check: if no term present, skip fast
