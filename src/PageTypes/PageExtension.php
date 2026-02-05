@@ -2,11 +2,11 @@
 
 namespace Sunnysideup\Glossary\PageTypes;
 
-use SilverStripe\CMS\Model\SiteTreeExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
 
-class PageExtension extends SiteTreeExtension
+class PageExtension extends Extension
 {
     private static $db = [
         'NoAnnotationOnThisPage' => 'Boolean',
