@@ -7,29 +7,32 @@ namespace Sunnysideup\Glossary\Tasks;
 
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\ORM\DB;
+use SilverStripe\PolyExecution\Output\PolyOutput;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
 
 class MoveGlossaryTablesTask extends BuildTask
 {
-    protected $title = 'Move Glossary Tables';
-    protected $description = 'Migrates glossary tables from namespaced format to base format.';
+    protected string $title = 'Move Glossary Tables';
 
-    private static string $segment = 'move-glossary-tables';
+    protected static string $description = 'Migrates glossary tables from namespaced format to base format.';
 
-    private static $conversions = [
+    protected static string $commandName = 'move-glossary-tables';
+
+    private static array $conversions = [
         'GlossaryPage'          => 'Sunnysideup_Glossary_PageTypes_GlossaryPage',
         'GlossaryPage_Live'     => 'Sunnysideup_Glossary_PageTypes_GlossaryPage_Live',
         'GlossaryPage_Versions' => 'Sunnysideup_Glossary_PageTypes_GlossaryPage_Versions',
     ];
 
-    public function run($request)
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
-
-        $tables = $this->config()->get('conversions');
+        $tables = $this->config()->get('conversions') ?? [];
         foreach ($tables as $newTable => $oldTable) {
-            $this->migrateTable($oldTable, $newTable);
+            $this->migrateTable($oldTable, $newTable, $output);
         }
 
-        DB::alteration_message('Done.', 'created');
+        return Command::SUCCESS;
     }
 
     /**
@@ -37,33 +40,33 @@ class MoveGlossaryTablesTask extends BuildTask
      * - old table exists
      * - new table does NOT exist OR is empty
      */
-    private function migrateTable(string $oldTable, string $newTable): void
+    private function migrateTable(string $oldTable, string $newTable, PolyOutput $output): void
     {
         $oldExists = $this->tableExists($oldTable);
         $newExists = $this->tableExists($newTable);
         $newEmpty  = $newExists ? $this->tableIsEmpty($newTable) : true;
 
         if (! $oldExists) {
-            DB::alteration_message("Skip: {$oldTable} does not exist.", 'info');
+            $output->writeln("Skip: {$oldTable} does not exist.");
             return;
         }
 
         if (! $newEmpty) {
-            DB::alteration_message("Skip: {$newTable} exists and has data.", 'info');
+            $output->writeln("Skip: {$newTable} exists and has data.");
             return;
         }
 
         // --- Create new table if missing ---
         if (! $newExists) {
-            DB::alteration_message("Creating {$newTable}…", 'created');
+            $output->writeln("Creating {$newTable}...");
             DB::query("CREATE TABLE {$newTable} LIKE {$oldTable}");
         }
 
         // --- Copy data ---
-        DB::alteration_message("Copying data from {$oldTable} → {$newTable}…", 'created');
+        $output->writeln("Copying data from {$oldTable} -> {$newTable}...");
         DB::query("INSERT INTO {$newTable} SELECT * FROM {$oldTable}");
 
-        DB::alteration_message("✔ Copied {$oldTable} → {$newTable}", 'created');
+        $output->writeln("Copied {$oldTable} -> {$newTable}.");
     }
 
     private function tableExists(string $table): bool
