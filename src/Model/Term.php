@@ -422,7 +422,7 @@ class Term extends DataObject
      *
      * @return string (html)
      */
-    public static function link_glossary_terms(string $html, $page = null): string
+    public static function link_glossary_terms(string $html, ?SiteTree $page = null): string
     {
         if (null === self::$_glossary_cache) {
             self::$_glossary_cache = self::get()->filter(
