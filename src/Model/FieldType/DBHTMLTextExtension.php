@@ -3,6 +3,7 @@
 namespace Sunnysideup\Glossary\Model\FieldType;
 
 use Page;
+use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Extension;
 use SilverStripe\ORM\FieldType\DBField;
@@ -32,11 +33,13 @@ class DBHTMLTextExtension extends Extension
 
         $page = $pageID ? Page::get_by_id($pageID) : Director::get_current_page();
 
-        if ($page) {
+        if ($page && $page instanceof SiteTree) {
             $oncePerTermPerPage = (bool)$page->OneAnnotationPerTerm;
+            $newHTML = Term::link_glossary_terms((string) $html,  $page);
+        } else {
+            $newHTML = Term::link_glossary_terms((string) $html);
         }
 
-        $newHTML = Term::link_glossary_terms((string) $html,  $page);
 
 
         // Once Per Term option

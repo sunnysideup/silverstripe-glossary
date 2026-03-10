@@ -4,6 +4,7 @@ namespace Sunnysideup\Glossary\Model;
 
 use Page;
 use SilverStripe\Admin\CMSMenu;
+use SilverStripe\CMS\Controllers\CMSPagesController;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Injector\Injector;
@@ -417,11 +418,11 @@ class Term extends DataObject
 
     /**
      * @param string $html   html to be annotated
-     * @param SiteTree|null    $page
+     * @param SiteTree|null|CMSPagesController    $page
      *
      * @return string (html)
      */
-    public static function link_glossary_terms(string $html, ?SiteTree $page = null): string
+    public static function link_glossary_terms(string $html, $page = null): string
     {
         if (null === self::$_glossary_cache) {
             self::$_glossary_cache = self::get()->filter(
