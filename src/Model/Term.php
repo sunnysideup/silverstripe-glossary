@@ -505,7 +505,10 @@ class Term extends DataObject
         if ($allowed) {
             // create and cache a replacer
             if (!$this->replacer) {
-                $this->replacer = ReplacerBuilder::from($this->Title)
+                if (!$this->Title || strlen((string) $this->Title) < 2) {
+                    return $html;
+                }
+                $this->replacer = ReplacerBuilder::from((string) $this->Title)
                     //->addArrayDataValue('Title', $this->Title) // NOTE: Title is always overridden by the Replacer class
                     ->addArrayDataValue('Link', $this->getLink($alternativeGlossaryPage))
                     ->addArrayDataValue('ExplanationShort', $this->ExplanationShort)
