@@ -1,39 +1,39 @@
 {
-    "name": "sunnysideup/glossary",
-    "description": "Adds annotation / glossary to any term in your Silverstripe site.",
-    "type": "silverstripe-vendormodule",
-    "keywords": [
-        "Silverstripe-CMS",
-        "CMS",
-        "Silverstripe",
-        "Annotations",
-        "Annotate",
-        "Glossary",
-        "Terms",
-        "Explanations"
-    ],
-    "require": {
-        "silverstripe/cms": "^4.0 || ^5.0",
-        "wa72/htmlpagedom": "^3.0"
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "license": "BSD-3-Clause",
-    "authors": [
-        {
-            "name": "Nicolaas Francken",
-            "email": "modules@sunnysideup.co.nz",
-            "role": "lead developer"
-        }
-    ],
-    "extra": {
-        "expose": [
-            "client"
-        ]
-    },
-    "autoload": {
-        "psr-4": {
-            "Sunnysideup\\Glossary\\": "src/"
-        }
+  "name": "sunnysideup/glossary",
+  "description": "Adds annotation / glossary to any term in your Silverstripe site.",
+  "type": "silverstripe-vendormodule",
+  "keywords": [
+    "Silverstripe-CMS",
+    "CMS",
+    "Silverstripe",
+    "Annotations",
+    "Annotate",
+    "Glossary",
+    "Terms",
+    "Explanations"
+  ],
+  "require": {
+    "silverstripe/cms": "^4.0 || ^5.0",
+    "wa72/htmlpagedom": "^3.0"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Nicolaas Francken",
+      "email": "modules@sunnysideup.co.nz",
+      "role": "lead developer"
     }
+  ],
+  "extra": {
+    "expose": [
+      "client"
+    ]
+  },
+  "autoload": {
+    "psr-4": {
+      "Sunnysideup\\Glossary\\": "src/"
+    }
+  }
 }
