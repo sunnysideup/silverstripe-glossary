@@ -95,7 +95,6 @@ class Replacer
         foreach (iterator_to_array($nodes) as $node) {
             /** @var \DOMText $node */
             $original = $node->nodeValue;
-
             // Quick check: if no term present, skip fast
             if (!preg_match($this->pattern, $original)) {
                 continue;
@@ -223,18 +222,21 @@ class Replacer
      */
     private static function escape_str($str): string
     {
-        return preg_quote($str);
+        return preg_quote($str, '/');
     }
 
     /**
      * Call callback functions for each captured inner/outer strings.
      *
-     * @param function $callbackOuter
-     * @param function $callbackInner
+     * @param string $pattern
+     * @param string $subject
+     * @param string $capture
+     * @param callable $callbackOuter
+     * @param callable $callbackInner
      *
      * @return string
      */
-    private static function for_each_captures_all(string $pattern, string $subject, string $capture, $callbackOuter, $callbackInner)
+    private static function for_each_captures_all(string $pattern, string $subject, string $capture, callable $callbackOuter, callable $callbackInner)
     {
         $hits = preg_match_all($pattern, $subject, $matches, PREG_OFFSET_CAPTURE);
         if (0 === $hits) {
