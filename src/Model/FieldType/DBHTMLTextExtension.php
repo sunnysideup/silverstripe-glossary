@@ -36,7 +36,7 @@ class DBHTMLTextExtension extends Extension
             $oncePerTermPerPage = (bool)$page->OneAnnotationPerTerm;
         }
 
-        $newHTML = Term::link_glossary_terms((string) $html,  $page);
+        $newHTML = Term::link_glossary_terms((string) $html, $page);
 
 
         // Once Per Term option

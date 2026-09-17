@@ -2,10 +2,9 @@
 
 namespace Sunnysideup\Glossary\PageTypes;
 
+use SilverStripe\Model\List\GroupedList;
 use PageController;
-use PharIo\Manifest\Requirement;
 use SilverStripe\Core\Convert;
-use SilverStripe\ORM\GroupedList;
 use SilverStripe\View\Requirements;
 use Sunnysideup\Glossary\Model\Term;
 
