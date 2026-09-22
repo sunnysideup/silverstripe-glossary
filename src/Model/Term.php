@@ -7,6 +7,7 @@ use SilverStripe\Admin\CMSMenu;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Core\Validation\ValidationResult;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\LiteralField;
@@ -161,7 +162,7 @@ class Term extends DataObject
     //## write Section
     //######################
 
-    public function validate()
+    public function validate(): ValidationResult
     {
         $result = parent::validate();
         $fieldLabels = $this->FieldLabels();

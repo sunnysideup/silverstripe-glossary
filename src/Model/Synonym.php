@@ -4,6 +4,7 @@ namespace Sunnysideup\Glossary\Model;
 
 use SilverStripe\Admin\CMSMenu;
 use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Core\Validation\ValidationResult;
 use SilverStripe\ORM\DataObject;
 
 // use Sunnysideup\SiteTreeCanEdit\Model\Traits\SiteTreeCanEdit;
@@ -97,7 +98,7 @@ class Synonym extends DataObject
     //## write Section
     //######################
 
-    public function validate()
+    public function validate(): ValidationResult
     {
         $result = parent::validate();
         $fieldLabels = $this->FieldLabels();
