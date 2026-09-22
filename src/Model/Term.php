@@ -316,12 +316,14 @@ class Term extends DataObject
                 ]
             );
             foreach ([$fieldA, $fieldB] as $tempField) {
-                $tempField
-                    ->getConfig()
-                    ->removeComponentsByType(GridFieldAddNewButton::class);
+                if ($tempField && method_exists($tempField, 'getConfig')) {
+                    $tempField
+                        ->getConfig()
+                        ->removeComponentsByType(GridFieldAddNewButton::class);
+                }
             }
-            $fields->removeFieldFromTab('Root', 'DoNotAnnotateOn');
-            $fields->removeFieldFromTab('Root', 'OnlyAnnotateOn');
+            //$fields->removeFieldFromTab('Root', 'DoNotAnnotateOn');
+            //$fields->removeFieldFromTab('Root', 'OnlyAnnotateOn');
         }
 
         //turn off everything when archived
